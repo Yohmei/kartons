@@ -1,0 +1,33 @@
+/* -------------------------------------------------------------------
+ * ## transition
+ * ------------------------------------------------------------------- */
+@mixin transition($prop: all, $ease: cubic-bezier(0.71, 0, 0, 1), $time: 0.2s) {
+  transition: #{$prop} #{$ease} #{$time};
+}
+
+@mixin center($side: unset, $containerDesiredMeasure: unset, $targetDesiredMeasure: unset) {
+  #{$side}: calc(#{$containerDesiredMeasure} / 2 - #{$targetDesiredMeasure} / 2);
+}
+
+/* -------------------------------------------------------------------
+ * ## form placeholders
+ * ------------------------------------------------------------------- */
+@mixin placeholders() {
+  &::-webkit-input-placeholder {
+    color: $font !important;
+  }
+
+  &:-moz-placeholder {
+    /* Firefox 18- */
+    color: $font !important;
+  }
+
+  &::-moz-placeholder {
+    /* Firefox 19+ */
+    color: $font !important;
+  }
+
+  &:-ms-input-placeholder {
+    color: $font !important;
+  }
+}

@@ -1,0 +1,51 @@
+/* -------------------------------------------------------------------
+ * ## clearfix
+ * ------------------------------------------------------------------- */
+.clearfix::after {
+  clear: both;
+  content: '';
+  display: table;
+}
+
+/* -------------------------------------------------------------------
+ * ## hide text
+ * ------------------------------------------------------------------- */
+.hide-text {
+  overflow: hidden;
+  padding: 0;
+  /* 1 */
+  text-indent: 101%;
+  white-space: nowrap;
+}
+
+.hide {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+/* -------------------------------------------------------------------
+ * ## responsive video container
+ * ------------------------------------------------------------------- */
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+
+.video-container iframe,
+.video-container object,
+.video-container embed,
+.video-container video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

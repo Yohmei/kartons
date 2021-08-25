@@ -1,0 +1,213 @@
+/* -------------------------------------------------------------------
+ * ## buttons
+ * ------------------------------------------------------------------- */
+button,
+input[type='submit'],
+input[type='reset'],
+.blue-button,
+input.blue-button,
+.red-button,
+input.red-button,
+.green-button,
+input.green-button {
+  border-radius: 15px;
+  font-weight: bold;
+  font-family: $sans_font;
+  color: $font;
+  text-align: center;
+  cursor: pointer;
+  font-size: 16px;
+  height: 45px;
+  min-width: 120px;
+  width: max-content;
+  padding: 0 20px;
+  border: 3px solid transparent;
+  background: $bg;
+  line-height: 40px;
+  white-space: normal;
+  text-transform: capitalize;
+  box-shadow: 0 2px 2px 0 $bg, 0 3px 1px -2px $bg, 0 1px 5px 0 $bg;
+}
+
+.rounded-button {
+  border: none;
+  cursor: pointer;
+  height: 56px;
+  width: 56px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  text-shadow: 0 0 1px;
+  border-radius: 100%;
+  font-size: 3em;
+  color: #fff;
+  background: $focus;
+  font-weight: lighter;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $serif_font;
+  line-height: 62px;
+}
+
+.rounded-button:hover {
+  transform: scale(1.04);
+}
+
+button:hover,
+input[type='submit']:hover,
+input[type='reset']:hover,
+.blue-button:hover,
+input.blue-button:hover,
+.red-button:hover,
+input.red-button:hover,
+.green-button:hover,
+input.green-button:hover {
+  transform: none;
+}
+
+button:active,
+button.active,
+input[type='submit']:active,
+input[type='submit'].active,
+input[type='reset']:active,
+input[type='reset'].active,
+.blue-button:active,
+input.blue-button:active,
+.blue-button.active,
+input.blue-button.active,
+.red-button:active,
+input.red-button:active,
+.red-button.active,
+input.red-button.active,
+.green-button:active,
+input.green-button:active,
+.green-button.active,
+input.green-button.active,
+.rounded-button:active,
+.rounded-button.active {
+  box-shadow: none;
+  border-color: $font;
+  color: $font;
+  text-shadow: none;
+  background: $bg;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rounded-button:active,
+.rounded-button.active {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.blue-button,
+input.blue-button {
+  background: #367bf0;
+  border-color: #2656a8;
+}
+
+.red-button,
+input.red-button {
+  background: #b8174c;
+  border-color: #811035;
+}
+
+.green-button,
+input.green-button {
+  background: #19a187;
+  border-color: #12715f;
+}
+
+.onoffswitch {
+  font-weight: bold;
+  overflow: hidden;
+  height: 35px;
+  padding: 0;
+  margin-top: 7px;
+  display: inline-block;
+}
+
+.onoffswitch:hover {
+  transform: scale(1.01);
+  filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.25));
+}
+
+.onoffswitch * {
+  cursor: pointer;
+}
+
+.onoffswitch > span {
+  height: 35px;
+  text-align: left;
+  position: relative;
+  padding: 0;
+  width: 80px;
+  display: inline-block;
+  overflow: hidden;
+  background: #b8174c;
+  border: 3px solid #811035;
+  border-radius: 23px;
+  transition: border-color 0.2s;
+}
+
+.onoffswitch > span::after {
+  content: ' ';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translateX(0);
+  transition: transform 0.2s;
+  height: 24.5px;
+  width: 25px;
+  border-radius: 17px;
+  margin: 3px;
+  background: #fff;
+  // box-shadow: 0 3px 1px rgba(0, 0, 0, 0.5);
+}
+
+.onoffswitch input {
+  display: none;
+}
+
+.onoffswitch span span {
+  width: 200%;
+  transform: translateX(-50%);
+  transition: transform 0.2s;
+  display: block;
+}
+
+.onoffswitch span span::before,
+.onoffswitch span span::after {
+  color: #fff;
+  float: left;
+  width: 50%;
+  height: 30px;
+  font-size: 16px;
+  line-height: 30px;
+  box-sizing: border-box;
+  border-radius: 30px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.onoffswitch span span::before {
+  content: attr(data-on);
+  padding-left: 13px;
+  background: #367bf0;
+}
+
+.onoffswitch span span::after {
+  content: attr(data-off);
+  padding-right: 15px;
+  background: #b8174c;
+  text-align: right;
+}
+
+.onoffswitch input:checked + span span {
+  transform: translateX(0);
+}
+
+.onoffswitch input:checked + span::after {
+  transform: translateX(42px);
+}
+
+.onoffswitch input:checked + span {
+  background: #367bf0;
+  border-color: #2656a8;
+}

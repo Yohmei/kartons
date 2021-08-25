@@ -21,20 +21,141 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <style>
+      @-webkit-keyframes rotate-center {
+        10%,
+        90% {
+          -webkit-transform: translate3d(-1px, 0, 0);
+          transform: translate3d(-1px, 0, 0);
+        }
+        20%,
+        80% {
+          -webkit-transform: translate3d(2px, 0, 0);
+          transform: translate3d(2px, 0, 0);
+        }
+        30%,
+        50%,
+        70% {
+          -webkit-transform: translate3d(-4px, 0, 0);
+          transform: translate3d(-4px, 0, 0);
+        }
+        40%,
+        60% {
+          -webkit-transform: translate3d(4px, 0, 0);
+          transform: translate3d(4px, 0, 0);
+        }
+      }
+      @keyframes wiggle {
+        10%,
+        90% {
+          transform: translate3d(-1px, 0, 0);
+        }
+        20%,
+        80% {
+          transform: translate3d(2px, 0, 0);
+        }
+        30%,
+        50%,
+        70% {
+          transform: translate3d(-4px, 0, 0);
+        }
+        40%,
+        60% {
+          transform: translate3d(4px, 0, 0);
+        }
+      }
+      body {
+        line-height: 1.5;
+        padding: 20px;
+        margin: 0;
+      }
+      #overlay {
+        position: fixed;
+        z-index: 99999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: #000000;
+        transition: opacity 0.5s 0.3s;
+        pointer-events: none;
+      }
+      #overlay div {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 128px;
+        animation: wiggle 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both infinite;
+      }
+    </style>
+    <title>kartons</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="overlay">
+      <div>🤼‍♂️</div>
+    </div>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <script>
+      ;(function () {
+        function S(attr_name) {
+          return document.querySelector(attr_name)
+        }
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+        function load_bar() {
+          var overlay = S('#overlay')
+          var videos = document.querySelectorAll('video')
+          var images = document.images
+          var c = 0
+          var il = images.length
+          var vl = videos.length
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+          if (il + vl == 0) return doneLoading()
+
+          function imgLoaded() {
+            c += 1
+            var percent = (100 / (il + vl)) * c
+            if (c === il + vl) return doneLoading()
+          }
+
+          function doneLoading() {
+            overlay.style.opacity = 0
+            for (var i = 0; i < il; i++) {
+              var tImg = new Image()
+              tImg.onload = function () {}
+              tImg.onerror = function () {}
+              tImg.src = images[i].src
+            }
+            for (var i = 0; i < vl; i++) {
+              var tv = videos[i]
+              tv.oncanplaythrough = function () {}
+            }
+            setTimeout(function () {
+              overlay.style.display = 'none'
+              document.removeEventListener('DOMContentLoaded', load_bar, false)
+            }, 800)
+          }
+
+          for (var i = 0; i < il; i++) {
+            var tImg = new Image()
+            tImg.onload = imgLoaded
+            tImg.onerror = imgLoaded
+            tImg.src = images[i].src
+          }
+
+          for (var i = 0; i < vl; i++) {
+            var tv = videos[i]
+            tv.oncanplaythrough = imgLoaded
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', load_bar, false)
+      })()
+    </script>
   </body>
 </html>

@@ -1,0 +1,21 @@
+// Base styles
+@import 'abstracts/variables';
+@import 'abstracts/functions';
+@import 'abstracts/mixins';
+@import 'abstracts/media';
+@import 'base/fonts';
+@import 'base/base';
+
+// Component styles
+@import 'components/layout';
+@import 'components/buttons';
+@import 'components/forms';
+
+// Page styles
+@import 'pages/Home.scss';
+@import 'pages/NotFound.scss';
+@import 'pages/Dashboard.scss';
+@import 'pages/Notes/Note.scss';
+@import 'pages/Notes/Notes.scss';
+@import 'pages/Finance/Finance.scss';
+@import 'pages/Finance/Finances.scss';

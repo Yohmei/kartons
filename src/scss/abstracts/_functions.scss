@@ -1,0 +1,23 @@
+/// Native `url(..)` function wrapper
+@function static($base, $folder, $name) {
+  @return url($base + $folder + $name);
+}
+
+/// Returns URL to an image based on its name
+@function img($name, $base: $base-url) {
+  @return static($base, 'img/', $name);
+}
+
+/// Returns URL to a font based on its name
+@function font($name, $base: $base-url) {
+  @return static($base, 'fonts/', $name);
+}
+
+/// Returns URL to a vector based on its name
+@function svg($name, $base: $base-url) {
+  @return static($base, 'svg/', $name);
+}
+
+@function absToCenter($measurement: unset) {
+  @return calc(100% / 2 - #{$measurement} / 2);
+}

@@ -1,0 +1,140 @@
+@keyframes title-loading {
+  0% {
+    background-color: lighten($bg, 20%);
+  }
+
+  100% {
+    background-color: lighten($bg, 15%);
+  }
+}
+
+@keyframes content-loading {
+  0% {
+    background-color: lighten($bg, 13%);
+  }
+
+  100% {
+    background-color: lighten($bg, 11%);
+  }
+}
+
+.Notes {
+  header {
+    box-shadow: 0px 5px 7px 7px $bg;
+    position: relative;
+    z-index: $z_index1;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    position: relative;
+    padding-bottom: 20px;
+
+    .note-block {
+      background-color: lighten($bg, 5%);
+      border-radius: 20px;
+      margin-top: 20px;
+      padding: 15px;
+      width: 100%;
+      position: relative;
+
+      .note-cont {
+        width: 85%;
+
+        h4 {
+          padding-left: 10px;
+          margin-bottom: 7px;
+        }
+
+        .loading-body {
+          content: '';
+          background-color: inherit;
+          height: 150px;
+          width: 90%;
+          border-radius: 20px;
+          margin-bottom: 5px;
+
+          .loading-title {
+            border-radius: 10px;
+            width: 50%;
+            height: 32%;
+            content: '';
+            background-color: lighten($bg, 17%);
+            margin-bottom: 10px;
+            animation: title-loading 1s ease-in-out infinite alternate backwards;
+          }
+
+          .loading-content {
+            border-radius: 15px;
+            width: 95%;
+            height: 58%;
+            content: '';
+            background-color: lighten($bg, 13%);
+            animation: content-loading 1s ease-in-out infinite alternate backwards;
+          }
+        }
+
+        .note-body {
+          padding: 5px;
+          display: flex;
+          flex-direction: column;
+
+          .LinesEllipsis {
+            white-space: pre-line;
+          }
+
+          .list-note-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1px;
+
+            .checkbox-input {
+              position: relative;
+              pointer-events: none;
+              padding: 0;
+              background-color: lighten($color: $bg, $amount: 5%);
+              border-color: $font;
+              box-shadow: none;
+              height: 14px;
+              width: 14px;
+            }
+          }
+        }
+      }
+
+      .icon-cont {
+        position: absolute;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 100%;
+        width: 15%;
+
+        right: 0;
+        top: 0;
+
+        .icon {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+
+    .new-note {
+      position: fixed;
+      bottom: 19%;
+      font-size: 1.3em;
+      width: 64%;
+      font-weight: bold;
+      display: flex;
+      justify-content: flex-end;
+      @include center(left, 100%, 64%);
+    }
+  }
+
+  nav {
+    box-shadow: 0px -7px 7px 2px $bg;
+  }
+}

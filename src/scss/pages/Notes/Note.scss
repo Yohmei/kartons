@@ -1,0 +1,131 @@
+.Note {
+  .content {
+    background-color: lighten($bg, 5%);
+    border-radius: 20px;
+    padding: 10px;
+    overflow-y: scroll;
+    position: relative;
+
+    .note-header {
+      height: 10%;
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      #title {
+        font-weight: bold;
+        font-size: 1.5em;
+        width: 100%;
+        margin: 0;
+        padding: 0 1rem;
+        position: relative;
+      }
+
+      .title-label {
+        color: transparentize($color: $font, $amount: 0.5);
+        font-weight: bold;
+        font-size: 1.5em;
+        pointer-events: none;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding: 0 1rem;
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .header-shadow {
+      content: '';
+      height: 10px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0px 5px 5px 5px lighten($bg, 5%);
+      z-index: $z_index1;
+    }
+
+    .note-cont {
+      padding: 5px;
+      height: 76%;
+      overflow-y: scroll;
+      position: relative;
+
+      .note-body {
+        display: flex;
+        flex-direction: column;
+
+        #text-note {
+          padding: 5px;
+        }
+
+        .list-note-container {
+          display: flex;
+          align-items: center;
+          padding: 5px 0;
+          position: relative;
+
+          .drag-indicator {
+            display: flex;
+            align-items: center;
+          }
+
+          .checkbox-input {
+            background-color: lighten($color: $bg, $amount: 5%);
+            border-color: $font;
+            box-shadow: none;
+
+            &.empty {
+              border-color: transparentize($color: $font, $amount: 0.5);
+            }
+          }
+
+          .list-item {
+            margin: 0;
+            height: max-content;
+            font-weight: normal;
+            padding: 0;
+            width: 80%;
+            position: relative;
+          }
+
+          .list-item-label {
+            color: transparentize($color: $font, $amount: 0.5);
+            display: flex;
+            align-items: center;
+            pointer-events: none;
+            position: absolute;
+            left: 0;
+            padding-left: 52px;
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+    }
+
+    .button-cont {
+      position: relative;
+      height: 8%;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      box-shadow: 0px -7px 7px lighten($bg, 5%);
+      padding-top: 5px;
+
+      .note-button {
+        height: 100%;
+        width: 23px;
+
+        &.disabled {
+          pointer-events: none;
+          color: transparentize($color: $font, $amount: 0.5);
+        }
+      }
+
+      close-button {
+        width: 30px;
+      }
+    }
+  }
+}

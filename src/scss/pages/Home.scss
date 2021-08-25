@@ -1,0 +1,77 @@
+@keyframes login-scale-down {
+  from {
+    box-shadow: 0 0 0 0 $font, inset 0 0 0 0 $font;
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    box-shadow: 0 0 30px 30px $font, inset 0 0 30px 30px $font;
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+@-webkit-keyframes rotate-center {
+  0% {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotate-center {
+  0% {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.box-spinner {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background-color: $bg;
+  height: 100%;
+  z-index: $z_index1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  span {
+    font-size: 64px;
+  }
+}
+
+.Home {
+  footer {
+    .log-in-button {
+      position: fixed;
+      bottom: 170px;
+      width: 70px;
+      height: 70px;
+      box-shadow: 0 0 1px 1px $font, inset 0 0 1px 1px $font;
+
+      &::after {
+        content: '';
+        border: 2px solid $font;
+        width: 70px;
+        height: 70px;
+        position: absolute;
+        border: 1px solid $font;
+        box-shadow: 0 0 1px 1px $font, inset 0 0 1px 1px $font;
+        animation: login-scale-down 2s infinite forwards;
+      }
+
+      &:active {
+        box-shadow: inset 0 0 10px 10px $font, inset 0 0 10px 10px $font;
+      }
+    }
+  }
+}

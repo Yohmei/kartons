@@ -1,0 +1,328 @@
+/* -------------------------------------------------------------------
+ * ## base
+ * ------------------------------------------------------------------- */
+html,
+body {
+  height: 100vh;
+
+  #detach-button-host {
+    display: none;
+  }
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+  outline: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: default;
+  letter-spacing: 1px;
+  margin-top: 0;
+}
+
+body {
+  font-family: $sans_font;
+  font-size: 14px;
+  line-height: 1.5;
+  color: $font;
+  background-color: $bg;
+  word-wrap: break-word;
+  text-rendering: optimizeLegibility;
+  padding: 20px;
+  margin: 0;
+
+  @include media('<ipad') {
+    font-size: 16px;
+  }
+}
+
+section,
+article,
+.section,
+.article,
+.paper {
+  word-wrap: break-word;
+  word-break: normal;
+}
+
+/* -------------------------------------------------------------------
+ * ## text selection
+ * ------------------------------------------------------------------- */
+::-moz-selection {
+  color: $bg;
+  background: $focus;
+  text-shadow: none;
+}
+
+::selection {
+  color: $bg;
+  background: $focus;
+  text-shadow: none;
+}
+
+/* -------------------------------------------------------------------
+ * ## media
+ * ------------------------------------------------------------------- */
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+  vertical-align: middle;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+canvas {
+  display: block;
+}
+
+/* -------------------------------------------------------------------
+ * ## svg container
+ * ------------------------------------------------------------------- */
+object {
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------
+ * ## indentation reset
+ * ------------------------------------------------------------------- */
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+p,
+blockquote,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
+
+/* -------------------------------------------------------------------
+ * ## headings
+ * ------------------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  -webkit-font-smoothing: auto;
+  -webkit-font-smoothing: antialiased;
+  -webkit-font-variant-ligatures: common-ligatures;
+  -moz-font-variant-ligatures: common-ligatures;
+  font-variant-ligatures: common-ligatures;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-bottom: 1.8rem;
+}
+
+h1 {
+  font-size: 3em;
+  line-height: 1.25;
+  letter-spacing: -0.1rem;
+}
+
+h2 {
+  font-size: 2.2em;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 1.8em;
+  line-height: 1.25;
+}
+
+h4 {
+  font-size: 1.4em;
+  line-height: 1.286;
+}
+
+h5 {
+  font-size: 1.2em;
+  line-height: 1.235;
+}
+
+h6 {
+  font-size: 1em;
+  line-height: 1.286;
+  text-transform: uppercase;
+  letter-spacing: 0.16rem;
+}
+
+/* -------------------------------------------------------------------
+ * ## text formating
+ * ------------------------------------------------------------------- */
+em,
+i {
+  font-style: italic;
+  line-height: inherit;
+}
+
+strong,
+b {
+  font-weight: bold;
+  line-height: inherit;
+}
+
+small {
+  font-size: 60%;
+  line-height: inherit;
+}
+
+p {
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+/* -------------------------------------------------------------------
+ * ## lists
+ * ------------------------------------------------------------------- */
+ol {
+  list-style: decimal;
+}
+
+ul {
+  list-style: circle;
+}
+
+ol,
+ul {
+  margin-left: 1em;
+  margin-bottom: 16px;
+}
+
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin: 0.6em 0 0.6em 1.7em;
+}
+
+/* -------------------------------------------------------------------
+ * ## links
+ * ------------------------------------------------------------------- */
+a img {
+  border: none;
+}
+
+a:link,
+a:visited,
+a:active,
+a {
+  color: $font;
+  font-family: $sans_font;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  transition: 0.07s ease-in-out;
+
+  &:hover {
+    color: $focus;
+  }
+}
+
+a * {
+  cursor: pointer !important;
+}
+
+.paper {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  padding: 10px 20px;
+  background-color: #fff;
+  margin-top: 20px;
+  min-height: 100px;
+  color: #000;
+}
+
+.selectable,
+.selectable * {
+  cursor: auto;
+  user-select: text;
+  -webkit-touch-callout: text;
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+/* -------------------------------------------------------------------
+ * ## lines
+ * ------------------------------------------------------------------- */
+hr {
+  width: 70%;
+  border: 1px solid $font;
+  background-color: $font;
+  border-radius: 4px;
+  margin: 0 auto 2rem;
+}
+
+/* -------------------------------------------------------------------
+ * ## lines
+ * ------------------------------------------------------------------- */
+code {
+  color: #000;
+  font-weight: bold;
+  font-family: $code;
+}
+
+/* -------------------------------------------------------------------
+ * ## scrollbar styles
+ * ------------------------------------------------------------------- */
+/* width */
+::-webkit-scrollbar {
+  width: 0;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $font;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $font;
+}
