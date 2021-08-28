@@ -29,14 +29,16 @@ function TextNote({ subject }: { subject: Subject<INotePayload> }) {
 
       for (let i = 0; i < arr_by_paragraph.length; i++) {
         const element = arr_by_paragraph[i]
+        let content = note_state.content
 
-        if (element.charAt(0) === '-') {
-          let content = note_state.content
-          content = content.replace(new RegExp('<div>-</div>', 'g'), '<div>&nbsp;&nbsp;-&nbsp;</div>')
-          const note = { ...note_state, content }
-          subject.next(note)
-          update_note_context(note, dispatch)
+        if (element === '-') {
+          if (i === 0) content = content.replace(new RegExp('-', 'g'), '&nbsp;&nbsp;-&nbsp;')
+          else content = content.replace(new RegExp('<div>-</div>', 'g'), '<div>&nbsp;&nbsp;-&nbsp;</div>')
         }
+
+        const note = { ...note_state, content }
+        subject.next(note)
+        update_note_context(note, dispatch)
       }
     }
 
@@ -48,10 +50,14 @@ function TextNote({ subject }: { subject: Subject<INotePayload> }) {
 
         if (element === '<br>') {
           const prev_item = arr_by_paragraph[i - 1]
-          const if_char1_dash = prev_item.trim().startsWith('&nbsp;&nbsp;-')
+          let if_char1_dash = false
+
+          if (prev_item) if_char1_dash = prev_item.trim().startsWith('&nbsp;&nbsp;-')
+          else if_char1_dash = false
+
           let content = note_state.content
 
-          if (if_char1_dash) content = content.replace(new RegExp('<br>', 'g'), '&nbsp;&nbsp;-&nbsp;')
+          if (if_char1_dash) content = content.replace(new RegExp('<br></div>$', 'g'), '&nbsp;&nbsp;-&nbsp;</div>')
 
           if (prev_item === '&nbsp;&nbsp;-&nbsp;')
             content = content.replace(

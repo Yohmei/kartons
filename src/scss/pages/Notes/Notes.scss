@@ -126,11 +126,10 @@
       position: fixed;
       bottom: 19%;
       font-size: 1.3em;
-      width: 64%;
       font-weight: bold;
       display: flex;
       justify-content: flex-end;
-      @include center(left, 100%, 64%);
+      @include center(right, 100%, 64%);
     }
   }
 
