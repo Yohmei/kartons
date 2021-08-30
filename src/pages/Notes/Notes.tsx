@@ -113,14 +113,16 @@ const Notes = ({ data_state }: IPageProps) => {
                 {note.title !== '' || note.content !== '' ? (
                   <div className='note-body'>
                     {note.content.map((content: string, i: number) => {
-                      if (i < 6)
-                        return (
-                          <div key={i} className='list-note-container'>
-                            {i !== 5 && <input className='checkbox-input' type='checkbox' name='my-checkbox' />}
-                            <span style={i === 5 ? { paddingLeft: '10px' } : {}}>{i === 5 ? '🤸🤸🤸' : content}</span>
-                          </div>
-                        )
-                      else return <div key={i}></div>
+                      if (i < 6) {
+                        if (i === 0 && content === '') return <div key={i}></div>
+                        else
+                          return (
+                            <div key={i} className='list-note-container'>
+                              {i !== 5 && <input className='checkbox-input' type='checkbox' name='my-checkbox' />}
+                              <span style={i === 5 ? { paddingLeft: '10px' } : {}}>{i === 5 ? '🤸🤸🤸' : content}</span>
+                            </div>
+                          )
+                      } else return <div key={i}></div>
                     })}
                   </div>
                 ) : (

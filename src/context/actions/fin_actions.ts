@@ -1,14 +1,22 @@
 import dayjs from 'dayjs'
+import { addDoc, collection, DocumentData, DocumentReference, onSnapshot, query, where } from 'firebase/firestore'
 import { Dispatch } from 'react'
 import rfdc from 'rfdc'
+import { db } from '../../config/fb_config'
 import { get_local_wallet, set_local_wallet, wallet_observable } from '../../local_storage/fin_storage'
 import { remove_arr_item } from '../../utils'
-import { IWallet, IWalletAction, IWalletEntry } from '../reducers/fin_reducer'
+import { ini_state, IWallet, IWalletAction, IWalletEntry } from '../reducers/fin_reducer'
 
 const clone = rfdc()
 
 export const update_wallet_context = (payload: IWalletEntry[], dispatch: React.Dispatch<IWalletAction>) => {
   dispatch({ type: 'UPDATE_WALLET', payload })
+}
+
+const set_wallet = (wallet: IWallet[]) => {
+  await updateDoc(doc(db, 'finance', wallet.id), { ...note, timestamp: new Date() }).catch((err) => {
+    console.log(err)
+  })
 }
 
 export const get_current_wallet_entries = (wallet: IWallet[]) => {
@@ -79,27 +87,70 @@ export const update_wallet = (
   set_current_wallet(wallet, wallet_entries)
 }
 
+export const add_new_wallet = async (user_uid: string) => {
+  const new_wallet = clone(ini_state)
+  new_wallet[0].uid = user_uid
+
+  const doc_ref = (await addDoc(collection(db, 'finance'), new_wallet[0]).catch((err) => {
+    console.log(err)
+  })) as DocumentReference<DocumentData>
+
+  return doc_ref.id
+}
+
 export const wallet_subscribe = (
   user_uid: string,
   dispatch: React.Dispatch<IWalletAction>,
-  set_data_received: Dispatch<React.SetStateAction<boolean>>,
-  is_offline: boolean | undefined
+  set_data_received: Dispatch<React.SetStateAction<boolean>>
+) => {
+  const q = query(collection(db, 'finance'), where('uid', '==', user_uid))
+
+  const unsub = onSnapshot(q, (snapshot) => {
+    if (snapshot.docs[0]) {
+      const wallet = [] as IWallet[]
+      for (const item of snapshot.docs) {
+        const doc = item
+        const wallet_inst = doc.data() as IWallet
+        wallet_inst.id = doc.id
+        wallet.push(wallet_inst)
+      }
+      set_local_wallet(wallet)
+      const wallet_entries = get_current_wallet_entries(wallet)
+      set_data_received(true)
+      update_wallet_context(wallet_entries, dispatch)
+    } else {
+      add_new_wallet(user_uid)
+    }
+  })
+
+  return unsub
+}
+
+const wallet_sub_local = (
+  user_uid: string,
+  dispatch: React.Dispatch<IWalletAction>,
+  set_data_received: Dispatch<React.SetStateAction<boolean>>
 ) => {
   let sub
-  if (is_offline) {
-    sub = wallet_observable.subscribe((wallet) => {
-      wallet = wallet.filter((wallet) => wallet.uid === user_uid)
+  sub = wallet_observable.subscribe((wallet) => {
+    let f_wallet = wallet.filter((wallet) => wallet.uid === user_uid)
 
-      if (wallet) {
-        const wallet_entries = get_current_wallet_entries(wallet)
-        set_data_received(true)
-        update_wallet_context(wallet_entries, dispatch)
+    if (f_wallet.length !== 0) {
+      const wallet_entries = get_current_wallet_entries(f_wallet)
+      set_data_received(true)
+      update_wallet_context(wallet_entries, dispatch)
+    } else {
+      if (wallet.length === 1) {
+        wallet[0].uid = user_uid
+      } else {
+        const new_wallet = clone(ini_state)
+        new_wallet[0].uid = user_uid
+        wallet.push(new_wallet[0])
       }
-    })
 
-    return sub.unsubscribe.bind(sub)
-  } else {
-    // firebase
-    return () => {}
-  }
+      set_current_wallet(wallet, [])
+    }
+  })
+
+  return sub.unsubscribe.bind(sub)
 }

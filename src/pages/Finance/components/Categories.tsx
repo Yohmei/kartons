@@ -36,7 +36,7 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
   const [state, set_state] = useState<any[][]>([]) // ICategory[][] or IDetail[][]
   const [is_new_category_name, set_is_new_category_name] = useState(false)
   const { auth_state } = useContext(AuthContext)
-  const { user, is_offline } = auth_state
+  const { user } = auth_state
 
   const add_category = (new_category_name: string) => {
     if (wallet_entry) {
@@ -118,9 +118,9 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
 
   useEffect(() => {
     let unsub = () => {}
-    unsub = categories_subscribe(user.uid, dispatch_cat, data_state.set_data_received, is_offline)
+    unsub = categories_subscribe(user.uid, dispatch_cat, data_state.set_data_received)
     return () => unsub()
-  }, [data_state.set_data_received, dispatch_cat, is_offline, user.uid])
+  }, [data_state.set_data_received, dispatch_cat, user.uid])
 
   return (
     <animated.div style={ani_style} className='wallet-categories'>

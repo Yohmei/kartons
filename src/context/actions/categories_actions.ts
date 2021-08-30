@@ -116,18 +116,13 @@ export const delete_category = (category_id: string, is_details: boolean) => {
 export const categories_subscribe = (
   user_uid: string,
   dispatch: React.Dispatch<ICategoriesAction>,
-  set_data_received: Dispatch<React.SetStateAction<boolean>>,
-  is_offline: boolean | undefined
+  set_data_received: Dispatch<React.SetStateAction<boolean>>
 ) => {
   let sub
-  if (is_offline) {
-    sub = categories_observable.subscribe((categories) => {
-      set_data_received(true)
-      update_categories_context(categories, dispatch)
-    })
+  sub = categories_observable.subscribe((categories) => {
+    set_data_received(true)
+    update_categories_context(categories, dispatch)
+  })
 
-    return sub.unsubscribe.bind(sub)
-  } else {
-    return () => {}
-  }
+  return sub.unsubscribe.bind(sub)
 }

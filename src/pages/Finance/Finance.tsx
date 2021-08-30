@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal/es6/react'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTransition } from 'react-spring'
@@ -26,7 +27,7 @@ const Finance = ({ data_state }: IPageProps) => {
   const category_transition = useTransition(is_categories, category_transition_o)
   const amount_transition = useTransition(is_amount, category_transition_o)
   const { auth_state } = useContext(AuthContext)
-  const { user, is_offline } = auth_state
+  const { user } = auth_state
 
   const open_categories = (wallet_entry: IWalletEntry, { is_details }: { is_details: boolean }) => {
     set_is_details(is_details)
@@ -54,9 +55,11 @@ const Finance = ({ data_state }: IPageProps) => {
 
   useEffect(() => {
     let unsub = () => {}
-    unsub = wallet_subscribe(user.uid, dispatch, data_state.set_data_received, is_offline)
+
+    if (!equal(user, { uid: '' })) unsub = wallet_subscribe(user.uid, dispatch, data_state.set_data_received)
+
     return () => unsub()
-  }, [user.uid, dispatch, data_state.set_data_received, is_offline])
+  }, [user.uid, dispatch, data_state.set_data_received])
 
   return (
     <div className='content'>
