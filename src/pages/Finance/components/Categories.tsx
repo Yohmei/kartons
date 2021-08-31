@@ -1,4 +1,6 @@
 import AddIcon from '@material-ui/icons/Add'
+import BlockIcon from '@material-ui/icons/Block'
+import DoneIcon from '@material-ui/icons/Done'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import CloseIcon from '@material-ui/icons/Close'
 import React, { useContext, useEffect, useState } from 'react'
@@ -35,6 +37,7 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
   const { categories_state, dispatch_cat } = useContext(CategoriesContext)
   const [state, set_state] = useState<any[][]>([]) // ICategory[][] or IDetail[][]
   const [is_new_category_name, set_is_new_category_name] = useState(false)
+  const [is_edit, set_is_edit] = useState(false)
   const { auth_state } = useContext(AuthContext)
   const { user } = auth_state
 
@@ -147,7 +150,11 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
                       >
                         {capitalise_first(category.name)}
                       </span>
-                      <span className='remove-category' onClick={() => delete_category(category.id, is_details)}>
+                      <span
+                        style={{ display: `${is_edit ? 'initial' : 'none'}` }}
+                        className='remove-category'
+                        onClick={() => delete_category(category.id, is_details)}
+                      >
                         <HighlightOffIcon className='remove-category-icon' />
                       </span>
                     </div>
@@ -161,8 +168,18 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
       {is_new_category_name && (
         <NewCategoryInput add_category={add_category} toggle_new_category_input={toggle_new_category_input} />
       )}
-      <div className='categories-footer' onClick={close_categories}>
-        <CloseIcon className='close-icon' />
+      <div className='categories-footer'>
+        <span
+          onClick={() => {
+            if (is_edit) set_is_edit(false)
+            else set_is_edit(true)
+          }}
+        >
+          {is_edit ? <DoneIcon className='close-icon' /> : <BlockIcon className='close-icon edit-icon' />}
+        </span>
+        <span onClick={close_categories}>
+          <CloseIcon className='close-icon' />
+        </span>
       </div>
     </animated.div>
   )

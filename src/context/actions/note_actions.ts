@@ -105,8 +105,8 @@ export const dash_note_subscribe = (
       const doc = snapshot.docs[0]
       const payload = doc.data() as INotePayload
       payload.id = doc.id
-      set_data_received(true)
       update_note_context(payload, dispatch)
+      set_data_received(true)
     } else {
       create_new_note(user_uid, { is_list: true, is_dashboard: true })
     }

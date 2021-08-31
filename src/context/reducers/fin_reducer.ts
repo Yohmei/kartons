@@ -39,6 +39,7 @@ export interface ICategory {
 
 export interface ICategories {
   id: string
+  uid: string
   timestamp: Date
   type: 'expenses' | 'income'
   content: ICategory[]

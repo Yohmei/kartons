@@ -1,9 +1,24 @@
 import dayjs from 'dayjs'
-import { addDoc, collection, DocumentData, DocumentReference, onSnapshot, query, where } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  doc,
+  DocumentData,
+  DocumentReference,
+  onSnapshot,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 import { Dispatch } from 'react'
 import rfdc from 'rfdc'
 import { db } from '../../config/fb_config'
-import { get_local_wallet, set_local_wallet, wallet_observable } from '../../local_storage/fin_storage'
+import {
+  get_local_wallet,
+  set_local_finance,
+  set_local_wallet,
+  wallet_observable,
+} from '../../local_storage/fin_storage'
 import { remove_arr_item } from '../../utils'
 import { ini_state, IWallet, IWalletAction, IWalletEntry } from '../reducers/fin_reducer'
 
@@ -13,36 +28,39 @@ export const update_wallet_context = (payload: IWalletEntry[], dispatch: React.D
   dispatch({ type: 'UPDATE_WALLET', payload })
 }
 
-const set_wallet = (wallet: IWallet[]) => {
-  await updateDoc(doc(db, 'finance', wallet.id), { ...note, timestamp: new Date() }).catch((err) => {
+const set_wallet = async (wallet: IWallet) => {
+  await updateDoc(doc(db, 'finance', wallet.id), { ...wallet, timestamp: new Date() }).catch((err) => {
     console.log(err)
   })
 }
 
-export const get_current_wallet_entries = (wallet: IWallet[]) => {
+export const get_current_wallet = (wallet: IWallet[]) => {
   for (let wallet_o of wallet) {
     if (wallet_o.year === dayjs(new Date()).year()) {
-      for (let month of wallet_o.months) {
-        if (month.term === dayjs(new Date()).month()) return month.content
-      }
+      return clone(wallet_o)
     }
+  }
+
+  return {} as IWallet
+}
+
+export const get_current_wallet_entries = (wallet: IWallet) => {
+  for (let month of wallet.months) {
+    if (month.term === dayjs(new Date()).month()) return month.content
   }
 
   return []
 }
 
-export const set_current_wallet = (wallet: IWallet[], content: IWalletEntry[]) => {
-  for (let wallet_o of wallet) {
-    if (wallet_o.year === dayjs(new Date()).year()) {
-      for (let month of wallet_o.months) {
-        if (month.term === dayjs(new Date()).month()) {
-          month.content = content
-        }
-      }
+export const set_current_wallet = (wallet: IWallet, content: IWalletEntry[]) => {
+  for (let month of wallet.months) {
+    if (month.term === dayjs(new Date()).month()) {
+      month.content = content
     }
   }
 
   set_local_wallet(clone(wallet))
+  set_wallet(wallet)
   return wallet
 }
 
@@ -107,17 +125,20 @@ export const wallet_subscribe = (
 
   const unsub = onSnapshot(q, (snapshot) => {
     if (snapshot.docs[0]) {
-      const wallet = [] as IWallet[]
-      for (const item of snapshot.docs) {
-        const doc = item
-        const wallet_inst = doc.data() as IWallet
-        wallet_inst.id = doc.id
-        wallet.push(wallet_inst)
+      const finance = [] as IWallet[]
+
+      for (const doc of snapshot.docs) {
+        const wallet = doc.data() as IWallet
+        wallet.id = doc.id
+        finance.push(wallet)
       }
-      set_local_wallet(wallet)
+
+      const wallet = get_current_wallet(finance)
       const wallet_entries = get_current_wallet_entries(wallet)
-      set_data_received(true)
+
+      set_local_wallet(wallet)
       update_wallet_context(wallet_entries, dispatch)
+      set_data_received(true)
     } else {
       add_new_wallet(user_uid)
     }
@@ -132,23 +153,24 @@ const wallet_sub_local = (
   set_data_received: Dispatch<React.SetStateAction<boolean>>
 ) => {
   let sub
-  sub = wallet_observable.subscribe((wallet) => {
-    let f_wallet = wallet.filter((wallet) => wallet.uid === user_uid)
+  sub = wallet_observable.subscribe((finance) => {
+    let f_finance = finance.filter((wallet) => wallet.uid === user_uid)
 
-    if (f_wallet.length !== 0) {
-      const wallet_entries = get_current_wallet_entries(f_wallet)
-      set_data_received(true)
+    if (f_finance.length !== 0) {
+      const wallet = get_current_wallet(f_finance)
+      const wallet_entries = get_current_wallet_entries(wallet)
       update_wallet_context(wallet_entries, dispatch)
+      set_data_received(true)
     } else {
-      if (wallet.length === 1) {
-        wallet[0].uid = user_uid
+      if (finance.length === 1) {
+        finance[0].uid = user_uid
       } else {
         const new_wallet = clone(ini_state)
         new_wallet[0].uid = user_uid
-        wallet.push(new_wallet[0])
+        finance.push(new_wallet[0])
       }
 
-      set_current_wallet(wallet, [])
+      set_local_finance(finance)
     }
   })
 

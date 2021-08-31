@@ -1,12 +1,14 @@
+import { addDoc, collection, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore'
 import { Dispatch } from 'react'
 import rfdc from 'rfdc'
+import { db } from '../../config/fb_config'
 import {
   categories_observable,
   get_local_categories,
   set_local_categories,
 } from '../../local_storage/categories_storage'
 import { remove_arr_item, r_id } from '../../utils'
-import { ICategoriesAction, ICategoriesPayload } from '../reducers/categories_reducer'
+import { ICategoriesAction, ICategoriesPayload, ini_state } from '../reducers/categories_reducer'
 import { ICategories } from '../reducers/fin_reducer'
 
 const clone = rfdc()
@@ -16,6 +18,12 @@ export const update_categories_context = (
   dispatch: React.Dispatch<ICategoriesAction>
 ) => {
   dispatch({ type: 'UPDATE_CATEGORIES', payload: categories })
+}
+
+const set_categories = async (categories: ICategories) => {
+  await updateDoc(doc(db, 'finance', categories.id), { ...categories, timestamp: new Date() }).catch((err) => {
+    console.log(err)
+  })
 }
 
 export const update_categories = (
@@ -113,15 +121,52 @@ export const delete_category = (category_id: string, is_details: boolean) => {
   set_local_categories(clone(categories))
 }
 
+export const add_new_categories = async (user_uid: string) => {
+  const categories = clone(ini_state)
+  for (let cat of categories) {
+    cat.uid = user_uid
+    addDoc(collection(db, 'categories'), cat).catch((err) => {
+      console.log(err)
+    })
+  }
+}
+
 export const categories_subscribe = (
+  user_uid: string,
+  dispatch: React.Dispatch<ICategoriesAction>,
+  set_data_received: Dispatch<React.SetStateAction<boolean>>
+) => {
+  const q = query(collection(db, 'categories'), where('uid', '==', user_uid))
+
+  const unsub = onSnapshot(q, (snapshot) => {
+    if (snapshot.docs[0]) {
+      const categories = [] as ICategoriesPayload[]
+
+      for (const doc of snapshot.docs) {
+        const category = doc.data() as ICategoriesPayload
+        category.id = doc.id
+        categories.push(category)
+      }
+
+      update_categories_context(categories, dispatch)
+      set_data_received(true)
+    } else {
+      add_new_categories(user_uid)
+    }
+  })
+
+  return unsub
+}
+
+export const categories_subscribe_local = (
   user_uid: string,
   dispatch: React.Dispatch<ICategoriesAction>,
   set_data_received: Dispatch<React.SetStateAction<boolean>>
 ) => {
   let sub
   sub = categories_observable.subscribe((categories) => {
-    set_data_received(true)
     update_categories_context(categories, dispatch)
+    set_data_received(true)
   })
 
   return sub.unsubscribe.bind(sub)

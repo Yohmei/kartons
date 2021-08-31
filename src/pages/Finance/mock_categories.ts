@@ -8,6 +8,7 @@ const clone = rfdc()
 const categories: ICategories[] = [
   {
     id: r_id(),
+    uid: '',
     timestamp: new Date(),
     type: 'expenses',
     content: [
@@ -77,6 +78,7 @@ const categories: ICategories[] = [
   },
   {
     id: r_id(),
+    uid: '',
     timestamp: new Date(),
     type: 'income',
     content: [

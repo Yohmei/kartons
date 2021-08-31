@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { get_local_wallet } from '../../local_storage/fin_storage'
+import { get_local_finance } from '../../local_storage/fin_storage'
 import page_hoc from '../Page'
 
 const Finances = () => {
-  const [wallet_state] = useState(get_local_wallet())
+  const [wallet_state] = useState(get_local_finance())
 
   return (
     <div className='content'>

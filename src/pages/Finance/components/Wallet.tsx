@@ -10,13 +10,14 @@ import { IDataState } from '../../Page'
 import { capitalise_first } from '../utils'
 
 export interface IWalletProp {
+  is_edit: boolean
   data_state: IDataState
   open_categories: (wallet_entry: IWalletEntry, { is_details }: { is_details: boolean }) => void
   open_amount: (wallet_entry: IWalletEntry) => void
   type: 'expenses' | 'income'
 }
 
-const Wallet = ({ data_state, open_categories, open_amount, type }: IWalletProp) => {
+const Wallet = ({ is_edit, data_state, open_categories, open_amount, type }: IWalletProp) => {
   const { wallet_state, dispatch } = useContext(FinanceContext)
   const table_body_ref = createRef<HTMLDivElement>()
 
@@ -51,9 +52,9 @@ const Wallet = ({ data_state, open_categories, open_amount, type }: IWalletProp)
 
   return (
     <div className='wallet-input-cont'>
-      <Spinner transition={data_state.transition} />
       <p className='sub-header'>{capitalise_first(type)}</p>
       <div className={`${type}-table table`}>
+        <Spinner transition={data_state.transition} />
         <div className='table-body' ref={table_body_ref}>
           {wallet_state.map((wallet_entry) => {
             if (type === wallet_entry.type)
@@ -94,7 +95,11 @@ const Wallet = ({ data_state, open_categories, open_amount, type }: IWalletProp)
                       <span>{wallet_entry.amount !== 0 ? wallet_entry.amount : ''}</span>
                     )}
                   </div>
-                  <div className='remove-wallet-entry' onClick={() => delete_wallet_entry(wallet_entry.id)}>
+                  <div
+                    style={{ display: `${is_edit ? 'flex' : 'none'}` }}
+                    className='remove-wallet-entry'
+                    onClick={() => delete_wallet_entry(wallet_entry.id)}
+                  >
                     <RemoveCircleOutlineIcon className='remove-wallet-entry-icon' />
                   </div>
                 </div>

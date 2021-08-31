@@ -30,18 +30,37 @@ export const usePrevious = (value: any) => {
   return ref.current
 }
 
-export function useTraceUpdate(props: any) {
-  const prev = useRef(props)
+export function useWhyDidYouUpdate(name: any, props: any) {
+  // Get a mutable ref object where we can store props ...
+  // ... for comparison next time this hook runs.
+  const previousProps = useRef()
   useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps: any, [k, v]: any) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v]
+    if (previousProps.current) {
+      // Get all keys from previous and current props
+      // @ts-ignore
+      const allKeys = Object.keys({ ...previousProps.current, ...props })
+      // Use this object to keep track of changed props
+      const changesObj = {}
+      // Iterate through keys
+      allKeys.forEach((key) => {
+        // If previous is different from current
+        // @ts-ignore
+        if (previousProps.current[key] !== props[key]) {
+          // Add to changesObj
+          // @ts-ignore
+          changesObj[key] = {
+            // @ts-ignore
+            from: previousProps.current[key],
+            to: props[key],
+          }
+        }
+      })
+      // If changesObj not empty then output to console
+      if (Object.keys(changesObj).length) {
+        console.log('[why-did-you-update]', name, changesObj)
       }
-      return ps
-    }, {})
-    if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps)
     }
-    prev.current = props
+    // Finally update previousProps with current props for next hook call
+    previousProps.current = props
   })
 }

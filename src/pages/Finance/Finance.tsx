@@ -24,6 +24,7 @@ const Finance = ({ data_state }: IPageProps) => {
   const [is_categories, set_is_categories] = useState(false)
   const [is_details, set_is_details] = useState(false)
   const [is_amount, set_is_amount] = useState(false)
+  const [is_edit, set_is_edit] = useState(false)
   const category_transition = useTransition(is_categories, category_transition_o)
   const amount_transition = useTransition(is_amount, category_transition_o)
   const { auth_state } = useContext(AuthContext)
@@ -59,7 +60,7 @@ const Finance = ({ data_state }: IPageProps) => {
     if (!equal(user, { uid: '' })) unsub = wallet_subscribe(user.uid, dispatch, data_state.set_data_received)
 
     return () => unsub()
-  }, [user.uid, dispatch, data_state.set_data_received])
+  }, [user, dispatch, data_state.set_data_received])
 
   return (
     <div className='content'>
@@ -80,11 +81,33 @@ const Finance = ({ data_state }: IPageProps) => {
       {amount_transition((style, is_amount) =>
         is_amount ? <NewAmountInput ani_style={style} wallet_entry={wallet_entry} close_amount={close_amount} /> : ''
       )}
-      <Wallet data_state={data_state} open_categories={open_categories} open_amount={open_amount} type={'expenses'} />
-      <Wallet data_state={data_state} open_categories={open_categories} open_amount={open_amount} type={'income'} />
-      <Link to='finances' className='history-link'>
-        History
-      </Link>
+      <Wallet
+        is_edit={is_edit}
+        data_state={data_state}
+        open_categories={open_categories}
+        open_amount={open_amount}
+        type={'expenses'}
+      />
+      <Wallet
+        is_edit={is_edit}
+        data_state={data_state}
+        open_categories={open_categories}
+        open_amount={open_amount}
+        type={'income'}
+      />
+      <div className='fin-footer'>
+        <span
+          onClick={() => {
+            if (is_edit) set_is_edit(false)
+            else set_is_edit(true)
+          }}
+        >
+          {is_edit ? 'Good' : 'Edit'}
+        </span>
+        <Link to='finances' className='history-link'>
+          History
+        </Link>
+      </div>
     </div>
   )
 }

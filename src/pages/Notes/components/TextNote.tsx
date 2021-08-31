@@ -23,6 +23,14 @@ function TextNote({ subject }: { subject: Subject<INotePayload> }) {
     s('#text-note').focus()
   }
 
+  useEffect(() => {
+    if (note_state.content === '<br>') {
+      let note = { ...note_state, content: '' }
+      subject.next(note)
+      update_note_context(note, dispatch)
+    }
+  }, [note_state, dispatch, subject])
+
   const handle_note_key_up_press = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === '-') {
       const arr_by_paragraph = note_state.content.replace(re_open_div, '~').replace(re_close_div, '').split('~')
@@ -53,11 +61,15 @@ function TextNote({ subject }: { subject: Subject<INotePayload> }) {
           let if_char1_dash = false
 
           if (prev_item) if_char1_dash = prev_item.trim().startsWith('&nbsp;&nbsp;-')
-          else if_char1_dash = false
 
           let content = note_state.content
 
-          if (if_char1_dash) content = content.replace(new RegExp('<br></div>$', 'g'), '&nbsp;&nbsp;-&nbsp;</div>')
+          console.log(prev_item)
+
+          if (prev_item === '<br>')
+            content = content.replace(new RegExp('<div><br></div>', ''), '<div><br class="closed-br"></div>')
+
+          if (if_char1_dash) content = content.replace(new RegExp('<br></div>', 'g'), '&nbsp;&nbsp;-&nbsp;</div>')
 
           if (prev_item === '&nbsp;&nbsp;-&nbsp;')
             content = content.replace(

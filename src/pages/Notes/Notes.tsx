@@ -87,6 +87,7 @@ const Notes = ({ data_state }: IPageProps) => {
                         .replaceAll('<div>', '\n')
                         .replaceAll('</div>', '')
                         .replaceAll('<br>', '')
+                        .replaceAll('<br class="closed-br">', '')
                         .replaceAll('&nbsp;', ' ')}
                       maxLine='6'
                       ellipsis=' 🚩🚩🚩'

@@ -4,6 +4,7 @@ import { ICategories } from './fin_reducer'
 export const ini_state: ICategories[] = [
   {
     id: r_id(),
+    uid: '',
     timestamp: new Date(),
     type: 'expenses',
     content: [
@@ -73,6 +74,7 @@ export const ini_state: ICategories[] = [
   },
   {
     id: r_id(),
+    uid: '',
     timestamp: new Date(),
     type: 'income',
     content: [

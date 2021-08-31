@@ -214,15 +214,25 @@ export const mock_wallet: IWallet[] = [
   },
 ]
 
-export const get_local_wallet = () => {
-  const notes = localStorage.getItem('wallet')
-  if (notes) return JSON.parse(notes) as IWallet[]
+export const get_local_finance = () => {
+  const finance = localStorage.getItem('finance')
+  if (finance) return JSON.parse(finance) as IWallet[]
   else return ini_state
 }
 
-export const wallet_observable = new BehaviorSubject<IWallet[]>(get_local_wallet())
+export const wallet_observable = new BehaviorSubject<IWallet[]>(get_local_finance())
 
-export const set_local_wallet = (local_wallet: IWallet[]) => {
+export const set_local_finance = (local_wallet: IWallet[]) => {
+  localStorage.setItem('finance', JSON.stringify(local_wallet))
+  wallet_observable.next(get_local_finance())
+}
+
+export const get_local_wallet = () => {
+  const wallet = localStorage.getItem('wallet')
+  if (wallet) return JSON.parse(wallet) as IWallet
+  else return {} as IWallet
+}
+
+export const set_local_wallet = (local_wallet: IWallet) => {
   localStorage.setItem('wallet', JSON.stringify(local_wallet))
-  wallet_observable.next(get_local_wallet())
 }
