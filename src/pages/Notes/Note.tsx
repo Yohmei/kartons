@@ -14,7 +14,7 @@ import { delete_note, get_note, update_note, update_note_context } from '../../c
 import { AuthContext } from '../../context/AuthProvider'
 import { NoteContext } from '../../context/NoteProvider'
 import { INotePayload } from '../../context/reducers/note_reducer'
-import { s, usePrevious } from '../../utils'
+import { s, setCaretIndex, usePrevious } from '../../utils'
 import page_hoc from '../Page'
 import ListNote from './components/ListNote'
 import TextNote from './components/TextNote'
@@ -86,8 +86,15 @@ const Note = () => {
   const press_enter_title = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' || event.key === 'ArrowDown') {
       event.preventDefault()
-      if (s(`#list-item-${0}`)) s(`#list-item-${0}`).focus()
-      else s(`#text-note`).focus()
+      if (s(`#list-item-${0}`)) {
+        const el = s(`#list-item-${0}`)
+        el.focus()
+        setCaretIndex(el, el.textContent?.length)
+      } else {
+        const el = s(`#text-note`)
+        el.focus()
+        setCaretIndex(el, el.textContent?.length)
+      }
     }
   }
 

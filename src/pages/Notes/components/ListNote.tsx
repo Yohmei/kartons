@@ -7,7 +7,7 @@ import { Subject } from 'rxjs'
 import { update_note_context } from '../../../context/actions/note_actions'
 import { NoteContext } from '../../../context/NoteProvider'
 import { INotePayload } from '../../../context/reducers/note_reducer'
-import { remove_arr_item, replace_arr_item, s } from '../../../utils'
+import { remove_arr_item, replace_arr_item, s, setCaretIndex } from '../../../utils'
 
 const clone = rfdc()
 
@@ -42,22 +42,30 @@ function ListNote({ subject }: { subject: Subject<INotePayload> }) {
       if (next_item) {
         event.preventDefault()
         next_item.focus()
+        setCaretIndex(next_item, next_item.textContent?.length)
       }
 
-    if (event.key === 'ArrowUp')
+    if (event.key === 'ArrowUp') {
       if (prev_item) {
         event.preventDefault()
         prev_item.focus()
+        setCaretIndex(prev_item, prev_item.textContent?.length)
       } else {
-        s('#title').focus()
+        const el = s('#title')
+        el.focus()
+        setCaretIndex(el, el.textContent?.length)
       }
+    }
 
     if (event.key === 'Backspace')
       if (if_item_empty && note_state.content.length !== 1) {
         event.preventDefault()
         remove_item(i)
         setTimeout(() => {
-          if (prev_item) prev_item.focus()
+          if (prev_item) {
+            prev_item.focus()
+            setCaretIndex(prev_item, prev_item.textContent?.length)
+          }
         }, 0)
       }
 
@@ -86,7 +94,10 @@ function ListNote({ subject }: { subject: Subject<INotePayload> }) {
   }
 
   useEffect(() => {
-    s(`#title`).focus()
+    const el = s(`#list-item-${note_state.content.length - 1}`)
+    el.focus()
+    setCaretIndex(el, el.textContent?.length)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

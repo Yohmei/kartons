@@ -30,37 +30,45 @@ export const usePrevious = (value: any) => {
   return ref.current
 }
 
-export function useWhyDidYouUpdate(name: any, props: any) {
-  // Get a mutable ref object where we can store props ...
-  // ... for comparison next time this hook runs.
-  const previousProps = useRef()
-  useEffect(() => {
-    if (previousProps.current) {
-      // Get all keys from previous and current props
-      // @ts-ignore
-      const allKeys = Object.keys({ ...previousProps.current, ...props })
-      // Use this object to keep track of changed props
-      const changesObj = {}
-      // Iterate through keys
-      allKeys.forEach((key) => {
-        // If previous is different from current
-        // @ts-ignore
-        if (previousProps.current[key] !== props[key]) {
-          // Add to changesObj
-          // @ts-ignore
-          changesObj[key] = {
-            // @ts-ignore
-            from: previousProps.current[key],
-            to: props[key],
-          }
-        }
-      })
-      // If changesObj not empty then output to console
-      if (Object.keys(changesObj).length) {
-        console.log('[why-did-you-update]', name, changesObj)
+export function getCaretIndex(element: any) {
+  let position = 0
+  const isSupported = typeof window.getSelection !== 'undefined'
+  if (isSupported) {
+    const selection = window.getSelection()
+    if (selection!.rangeCount !== 0) {
+      const range = window.getSelection()!.getRangeAt(0)
+      const preCaretRange = range.cloneRange()
+      preCaretRange.selectNodeContents(element)
+      preCaretRange.setEnd(range.endContainer, range.endOffset)
+      position = preCaretRange.toString().length
+    }
+  }
+  return position
+}
+
+export const setCaretIndex = (el: any, pos: any) => {
+  // Loop through all child nodes
+  for (var node of el.childNodes) {
+    if (node.nodeType === 3) {
+      // we have a text node
+      if (node.length >= pos) {
+        // finally add our range
+        var range = document.createRange(),
+          sel = window.getSelection()
+        range.setStart(node, pos)
+        range.collapse(true)
+        sel!.removeAllRanges()
+        sel!.addRange(range)
+        return -1 // we are done
+      } else {
+        pos -= node.length
+      }
+    } else {
+      pos = setCaretIndex(node, pos)
+      if (pos === -1) {
+        return -1 // no need to finish the for loop
       }
     }
-    // Finally update previousProps with current props for next hook call
-    previousProps.current = props
-  })
+  }
+  return pos // needed because of recursion stuff
 }

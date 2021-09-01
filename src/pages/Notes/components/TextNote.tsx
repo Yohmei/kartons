@@ -1,16 +1,17 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable'
 import { Subject } from 'rxjs'
 import { update_note_context } from '../../../context/actions/note_actions'
 import { NoteContext } from '../../../context/NoteProvider'
 import { INotePayload } from '../../../context/reducers/note_reducer'
-import { s } from '../../../utils'
+import { getCaretIndex, s, setCaretIndex } from '../../../utils'
 
 function TextNote({ subject }: { subject: Subject<INotePayload> }) {
   const re_open_div = new RegExp('<div>', 'g')
   const re_close_div = new RegExp('</div>', 'g')
 
   const { note_state, dispatch } = useContext(NoteContext)
+  const [caret_pos, set_caret_pos] = useState<number>(0)
 
   const type_note_content = (e: ContentEditableEvent) => {
     let content = e.target.value
@@ -20,18 +21,28 @@ function TextNote({ subject }: { subject: Subject<INotePayload> }) {
   }
 
   const focus_text = () => {
-    s('#text-note').focus()
+    s(`#text-note`).focus()
   }
 
   useEffect(() => {
+    if (note_state.content.includes('<div>&nbsp;&nbsp;-&nbsp;</div>')) {
+      setCaretIndex(s('#text-note'), caret_pos + 4)
+    }
+
     if (note_state.content === '<br>') {
       let note = { ...note_state, content: '' }
       subject.next(note)
       update_note_context(note, dispatch)
     }
-  }, [note_state, dispatch, subject])
+  }, [note_state, dispatch, subject, caret_pos])
 
   const handle_note_key_up_press = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'ArrowUp' && getCaretIndex(s('#text-note')) === 0) {
+      const el = s('#title')
+      el.focus()
+      setCaretIndex(el, el.textContent?.length)
+    }
+
     if (e.key === '-') {
       const arr_by_paragraph = note_state.content.replace(re_open_div, '~').replace(re_close_div, '').split('~')
 
@@ -51,6 +62,7 @@ function TextNote({ subject }: { subject: Subject<INotePayload> }) {
     }
 
     if (e.key === 'Enter') {
+      set_caret_pos(getCaretIndex(s('#text-note')))
       const arr_by_paragraph = note_state.content.replace(re_open_div, '~').replace(re_close_div, '').split('~')
 
       for (let i = 0; i < arr_by_paragraph.length; i++) {
@@ -84,7 +96,9 @@ function TextNote({ subject }: { subject: Subject<INotePayload> }) {
   }
 
   useEffect(() => {
-    s('#title').focus()
+    const el = s('#text-note')
+    el.focus()
+    setCaretIndex(el, el.textContent?.length)
   }, [])
 
   return (
