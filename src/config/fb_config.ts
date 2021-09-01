@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { enableIndexedDbPersistence, getFirestore } from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCTGcbwJTO8ilQGG-rpcgUWSylHo3lg-VI',
@@ -13,4 +13,3 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig)
 export const db = getFirestore()
-// enableIndexedDbPersistence(db).catch((err) => console.log(err.code))

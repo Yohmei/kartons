@@ -13,12 +13,7 @@ import {
 import { Dispatch } from 'react'
 import rfdc from 'rfdc'
 import { db } from '../../config/fb_config'
-import {
-  get_local_wallet,
-  set_local_finance,
-  set_local_wallet,
-  wallet_observable,
-} from '../../local_storage/fin_storage'
+import { get_local_wallet, set_local_wallet } from '../../local_storage/fin_storage'
 import { remove_arr_item } from '../../utils'
 import { ini_state, IWallet, IWalletAction, IWalletEntry } from '../reducers/fin_reducer'
 
@@ -147,32 +142,32 @@ export const wallet_subscribe = (
   return unsub
 }
 
-const wallet_sub_local = (
-  user_uid: string,
-  dispatch: React.Dispatch<IWalletAction>,
-  set_data_received: Dispatch<React.SetStateAction<boolean>>
-) => {
-  let sub
-  sub = wallet_observable.subscribe((finance) => {
-    let f_finance = finance.filter((wallet) => wallet.uid === user_uid)
+// const wallet_sub_local = (
+//   user_uid: string,
+//   dispatch: React.Dispatch<IWalletAction>,
+//   set_data_received: Dispatch<React.SetStateAction<boolean>>
+// ) => {
+//   let sub
+//   sub = wallet_observable.subscribe((finance) => {
+//     let f_finance = finance.filter((wallet) => wallet.uid === user_uid)
 
-    if (f_finance.length !== 0) {
-      const wallet = get_current_wallet(f_finance)
-      const wallet_entries = get_current_wallet_entries(wallet)
-      update_wallet_context(wallet_entries, dispatch)
-      set_data_received(true)
-    } else {
-      if (finance.length === 1) {
-        finance[0].uid = user_uid
-      } else {
-        const new_wallet = clone(ini_state)
-        new_wallet[0].uid = user_uid
-        finance.push(new_wallet[0])
-      }
+//     if (f_finance.length !== 0) {
+//       const wallet = get_current_wallet(f_finance)
+//       const wallet_entries = get_current_wallet_entries(wallet)
+//       update_wallet_context(wallet_entries, dispatch)
+//       set_data_received(true)
+//     } else {
+//       if (finance.length === 1) {
+//         finance[0].uid = user_uid
+//       } else {
+//         const new_wallet = clone(ini_state)
+//         new_wallet[0].uid = user_uid
+//         finance.push(new_wallet[0])
+//       }
 
-      set_local_finance(finance)
-    }
-  })
+//       set_local_finance(finance)
+//     }
+//   })
 
-  return sub.unsubscribe.bind(sub)
-}
+//   return sub.unsubscribe.bind(sub)
+// }

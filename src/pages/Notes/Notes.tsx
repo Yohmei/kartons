@@ -75,25 +75,31 @@ const Notes = ({ data_state }: IPageProps) => {
   return (
     <div className='content' ref={notes_content_ref}>
       {state.map((note, i) => {
-        if (typeof note.content === 'string')
+        if (typeof note.content === 'string') {
+          let note_body: string | LinesEllipsis = ''
+          if (note.title !== '' || note.content !== '') {
+            if (note.content.startsWith('<img')) note_body = 'Image'
+            else
+              note_body = (
+                <LinesEllipsis
+                  text={note.content
+                    .replaceAll('<div>', '\n')
+                    .replaceAll('</div>', '')
+                    .replaceAll('<br>', '')
+                    .replaceAll('<br class="closed-br">', '')
+                    .replaceAll('&nbsp;', ' ')}
+                  maxLine='6'
+                  ellipsis=' 🚩🚩🚩'
+                  trimRight
+                />
+              )
+          }
           return (
             <div className='note-block' key={i}>
               <div className='note-cont' onClick={() => open_note(note.id)}>
                 {note.title !== '' && <h4>{note.title}</h4>}
                 {note.title !== '' || note.content !== '' ? (
-                  <div className='note-body'>
-                    <LinesEllipsis
-                      text={note.content
-                        .replaceAll('<div>', '\n')
-                        .replaceAll('</div>', '')
-                        .replaceAll('<br>', '')
-                        .replaceAll('<br class="closed-br">', '')
-                        .replaceAll('&nbsp;', ' ')}
-                      maxLine='6'
-                      ellipsis=' 🚩🚩🚩'
-                      trimRight
-                    />
-                  </div>
+                  <div className='note-body'>{note_body}</div>
                 ) : (
                   <div className='loading-body'>
                     <div className='loading-title'></div>
@@ -106,7 +112,7 @@ const Notes = ({ data_state }: IPageProps) => {
               </div>
             </div>
           )
-        else
+        } else
           return (
             <div className='note-block' key={i}>
               <div className='note-cont' onClick={() => open_note(note.id)}>
