@@ -91,7 +91,7 @@ const categories: ICategories[] = [
 
 const useMockCategory = () => {
   const [categories_state, set_state] = useState(categories)
-  const update_categories = useCallback(
+  const add_category = useCallback(
     (new_category_name: string, type: 'expenses' | 'income') => {
       const new_category = {
         id: r_id(),
@@ -128,7 +128,7 @@ const useMockCategory = () => {
     [categories_state]
   )
 
-  const update_details = useCallback(
+  const add_detail = useCallback(
     (new_detail: string, type: 'expenses' | 'income', category_name: string) => {
       let categories
 
@@ -159,7 +159,7 @@ const useMockCategory = () => {
     [categories_state]
   )
 
-  return { categories_state, update_categories, update_details }
+  return { categories_state, add_category, add_detail }
 }
 
 export default useMockCategory

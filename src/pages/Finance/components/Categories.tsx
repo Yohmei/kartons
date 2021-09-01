@@ -1,16 +1,17 @@
 import AddIcon from '@material-ui/icons/Add'
 import BlockIcon from '@material-ui/icons/Block'
+import CloseIcon from '@material-ui/icons/Close'
 import DoneIcon from '@material-ui/icons/Done'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
-import CloseIcon from '@material-ui/icons/Close'
+import equal from 'fast-deep-equal/es6/react'
 import React, { useContext, useEffect, useState } from 'react'
 import RSpring, { animated } from 'react-spring'
 import rfdc from 'rfdc'
 import {
   categories_subscribe,
   delete_category,
-  update_categories,
-  update_details,
+  add_category,
+  add_detail,
 } from '../../../context/actions/categories_actions'
 import { update_wallet } from '../../../context/actions/fin_actions'
 import { AuthContext } from '../../../context/AuthProvider'
@@ -38,13 +39,14 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
   const [state, set_state] = useState<any[][]>([]) // ICategory[][] or IDetail[][]
   const [is_new_category_name, set_is_new_category_name] = useState(false)
   const [is_edit, set_is_edit] = useState(false)
+  const [category_not_exist, set_category_not_exist] = useState(false)
   const { auth_state } = useContext(AuthContext)
   const { user } = auth_state
 
-  const add_category = (new_category_name: string) => {
+  const add_category_m = (new_category_name: string) => {
     if (wallet_entry) {
-      if (!is_details) update_categories(categories_state, new_category_name, wallet_entry.type)
-      else update_details(categories_state, new_category_name, wallet_entry.type, wallet_entry.category)
+      if (!is_details) add_category(new_category_name, wallet_entry.type)
+      else add_detail(new_category_name, wallet_entry.type, wallet_entry.category)
     }
   }
 
@@ -67,29 +69,30 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
   }
 
   useEffect(() => {
+    const categories_loc = clone(categories_state)
     let categories: any[] = [] // ICategory[] | IDetail[]
 
     if (wallet_entry) {
       if (wallet_entry.type === 'expenses' && !is_details) {
-        const expenses = categories_state.find((category) => category.type === 'expenses')
-        if (expenses) {
-          categories = expenses.content
-        } else throw new Error('categories object is missing "expenses" type')
+        const expenses = categories_loc.find((category) => category.type === 'expenses')
+        if (expenses) categories = expenses.content
       } else if (wallet_entry.type === 'income' && !is_details) {
-        const income = categories_state.find((category) => category.type === 'income')
-        if (income) {
-          categories = income.content
-        } else throw new Error('categories object is missing "income" type')
+        const income = categories_loc.find((category) => category.type === 'income')
+        if (income) categories = income.content
       } else if (wallet_entry.type === 'expenses' && is_details) {
-        const expenses = categories_state.find((category) => category.type === 'expenses')
+        const expenses = categories_loc.find((category) => category.type === 'expenses')
         if (expenses) {
-          categories = expenses.content.find((category) => category.name === wallet_entry.category)!.details
-        } else throw new Error('categories object is missing "expenses" type')
+          const is_categories = expenses.content.find((category) => category.name === wallet_entry.category)
+          if (is_categories) categories = is_categories.details
+          else set_category_not_exist(true)
+        }
       } else if (wallet_entry.type === 'income' && is_details) {
-        const income = categories_state.find((category) => category.type === 'income')
+        const income = categories_loc.find((category) => category.type === 'income')
         if (income) {
-          categories = income.content.find((category) => category.name === wallet_entry.category)!.details
-        } else throw new Error('categories object is missing "income" type')
+          const is_categories = income.content.find((category) => category.name === wallet_entry.category)
+          if (is_categories) categories = is_categories.details
+          else set_category_not_exist(true)
+        }
       }
     }
 
@@ -121,9 +124,9 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
 
   useEffect(() => {
     let unsub = () => {}
-    unsub = categories_subscribe(user.uid, dispatch_cat, data_state.set_data_received)
+    if (!equal(user, { uid: '' })) unsub = categories_subscribe(user.uid, dispatch_cat, data_state.set_data_received)
     return () => unsub()
-  }, [data_state.set_data_received, dispatch_cat, user.uid])
+  }, [user, data_state.set_data_received, dispatch_cat, user.uid])
 
   return (
     <animated.div style={ani_style} className='wallet-categories'>
@@ -131,42 +134,58 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
       <div className='categories-header'>
         <h4>Categories</h4>
       </div>
-      <div className='categories-body'>
-        <div className='table-row-wrap'>
-          {state.map((row, i) => (
-            <div className='table-row' key={i}>
-              {row.map((category) => (
-                <div className='table-item' key={category.id}>
-                  {category.name === '' ? (
-                    <span onClick={toggle_new_category_input}>
-                      <AddIcon className='add-icon' />
-                    </span>
-                  ) : (
-                    <div>
-                      <span
-                        onClick={() => {
-                          if (wallet_entry) set_category(category.name, wallet_entry, is_details)
-                        }}
-                      >
-                        {capitalise_first(category.name)}
-                      </span>
-                      <span
-                        style={{ display: `${is_edit ? 'initial' : 'none'}` }}
-                        className='remove-category'
-                        onClick={() => delete_category(category.id, is_details)}
-                      >
-                        <HighlightOffIcon className='remove-category-icon' />
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ))}
+      {category_not_exist ? (
+        <div
+          style={{
+            width: '100%',
+            height: '80%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: '0 auto',
+            fontWeight: 'bold',
+          }}
+        >
+          Category does not exist.
         </div>
-      </div>
+      ) : (
+        <div className='categories-body'>
+          <div className='table-row-wrap'>
+            {state.map((row, i) => (
+              <div className='table-row' key={i}>
+                {row.map((category) => (
+                  <div className='table-item' key={category.id}>
+                    {category.name === '' ? (
+                      <span onClick={toggle_new_category_input}>
+                        <AddIcon className='add-icon' />
+                      </span>
+                    ) : (
+                      <div>
+                        <span
+                          onClick={() => {
+                            if (wallet_entry) set_category(category.name, wallet_entry, is_details)
+                          }}
+                        >
+                          {capitalise_first(category.name)}
+                        </span>
+                        <span
+                          style={{ display: `${is_edit ? 'initial' : 'none'}` }}
+                          className='remove-category'
+                          onClick={() => delete_category(category.id, is_details)}
+                        >
+                          <HighlightOffIcon className='remove-category-icon' />
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {is_new_category_name && (
-        <NewCategoryInput add_category={add_category} toggle_new_category_input={toggle_new_category_input} />
+        <NewCategoryInput add_category={add_category_m} toggle_new_category_input={toggle_new_category_input} />
       )}
       <div className='categories-footer'>
         <span

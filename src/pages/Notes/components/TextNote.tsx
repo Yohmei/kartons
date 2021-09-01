@@ -64,8 +64,6 @@ function TextNote({ subject }: { subject: Subject<INotePayload> }) {
 
           let content = note_state.content
 
-          console.log(prev_item)
-
           if (prev_item === '<br>')
             content = content.replace(new RegExp('<div><br></div>', ''), '<div><br class="closed-br"></div>')
 

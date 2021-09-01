@@ -1,10 +1,10 @@
 import { BehaviorSubject } from 'rxjs'
-import { ICategoriesPayload, ini_state } from '../context/reducers/categories_reducer'
+import { ICategoriesPayload } from '../context/reducers/categories_reducer'
 
 export const get_local_categories = () => {
   const notes = localStorage.getItem('categories')
   if (notes) return JSON.parse(notes) as ICategoriesPayload[]
-  else return ini_state
+  else return [] as ICategoriesPayload[]
 }
 
 export const categories_observable = new BehaviorSubject<ICategoriesPayload[]>(get_local_categories())

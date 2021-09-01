@@ -20,17 +20,17 @@ export const update_categories_context = (
   dispatch({ type: 'UPDATE_CATEGORIES', payload: categories })
 }
 
-const set_categories = async (categories: ICategories) => {
-  await updateDoc(doc(db, 'finance', categories.id), { ...categories, timestamp: new Date() }).catch((err) => {
-    console.log(err)
-  })
+const set_categories = (categories: ICategories[]) => {
+  set_local_categories(categories)
+  for (const cat of categories) {
+    updateDoc(doc(db, 'categories', cat.id), { ...cat, timestamp: new Date() }).catch((err) => {
+      console.log(err)
+    })
+  }
 }
 
-export const update_categories = (
-  categories_state: ICategories[],
-  new_category_name: string,
-  type: 'expenses' | 'income'
-) => {
+export const add_category = (new_category_name: string, type: 'expenses' | 'income') => {
+  const categories_state = get_local_categories()
   const new_category = {
     id: r_id(),
     name: new_category_name,
@@ -42,32 +42,42 @@ export const update_categories = (
       return category.type === 'expenses'
     })
 
-    if (expenses)
-      expenses.content = expenses!.content.map((category) => {
-        if (category.name === '') category = new_category
-        return category
+    if (expenses) {
+      const is_empty_field = expenses!.content.find((category) => {
+        return category.name === ''
       })
+
+      if (is_empty_field)
+        expenses.content = expenses!.content.map((category) => {
+          if (category.name === '') category = new_category
+          return category
+        })
+      else expenses.content.push(new_category)
+    }
   } else if (type === 'income') {
     const income = categories_state.find((category) => {
       return category.type === 'income'
     })
 
-    if (income)
-      income.content = income!.content.map((category) => {
-        if (category.name === '') category = new_category
-        return category
+    if (income) {
+      const is_empty_field = income!.content.find((category) => {
+        return category.name === ''
       })
+
+      if (is_empty_field)
+        income.content = income!.content.map((category) => {
+          if (category.name === '') category = new_category
+          return category
+        })
+      else income.content.push(new_category)
+    }
   }
 
-  set_local_categories(clone(categories_state))
+  set_categories(categories_state)
 }
 
-export const update_details = (
-  categories_state: ICategories[],
-  new_detail: string,
-  type: 'expenses' | 'income',
-  category_name: string
-) => {
+export const add_detail = (new_detail: string, type: 'expenses' | 'income', category_name: string) => {
+  const categories_state = get_local_categories()
   let categories
 
   if (type === 'expenses') {
@@ -84,17 +94,24 @@ export const update_details = (
     return category.name === category_name
   })
 
-  if (category)
-    category.details = category!.details.map((detail) => {
-      if (detail.name === '') detail = { id: r_id(), name: new_detail }
-      return detail
+  if (category) {
+    const is_empty_field = category!.details.find((detail) => {
+      return detail.name === ''
     })
 
-  set_local_categories(clone(categories_state))
+    if (is_empty_field)
+      category.details = category!.details.map((detail) => {
+        if (detail.name === '') detail = { id: r_id(), name: new_detail }
+        return detail
+      })
+    else category.details.push({ id: r_id(), name: new_detail })
+  }
+
+  set_categories(categories_state)
 }
 
 export const delete_category = (category_id: string, is_details: boolean) => {
-  let categories = get_local_categories()
+  const categories = get_local_categories()
 
   for (let i = 0; i < categories.length; i++) {
     const item = categories[i]
@@ -118,7 +135,7 @@ export const delete_category = (category_id: string, is_details: boolean) => {
     }
   }
 
-  set_local_categories(clone(categories))
+  set_categories(categories)
 }
 
 export const add_new_categories = async (user_uid: string) => {
@@ -148,6 +165,7 @@ export const categories_subscribe = (
         categories.push(category)
       }
 
+      set_local_categories(categories)
       update_categories_context(categories, dispatch)
       set_data_received(true)
     } else {
