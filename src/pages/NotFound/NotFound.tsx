@@ -1,13 +1,12 @@
 import React from 'react'
+import page_hoc from '../Page'
 
-const Home = () => {
+const NotFound = () => {
   return (
-    <div className='page'>
-      <main className='NotFound'>
-        <h1>PAGE NOT FOUND :(</h1>
-      </main>
+    <div className='content' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <h1>NOT FOUND</h1>
     </div>
   )
 }
 
-export default Home
+export default page_hoc(NotFound, '😢')

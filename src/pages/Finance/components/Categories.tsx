@@ -141,9 +141,8 @@ const Categories = ({ ani_style, close_categories, wallet_entry, is_details }: I
       </div>
       {category_not_exist ? (
         <div
+          className='categories-body'
           style={{
-            width: '100%',
-            height: '80%',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',

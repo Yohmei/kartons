@@ -35,43 +35,36 @@ const routes = [
   {
     path: '/',
     component: Home,
-    name: 'Home',
     exact: true,
   },
   {
     path: '/dashboard',
     component: Dashboard,
-    name: 'Dashboard',
     exact: true,
   },
   {
     path: '/finance',
     component: Finance,
-    name: 'Finance',
     exact: true,
   },
   {
     path: '/finances',
     component: Finances,
-    name: 'Finances',
-    exact: true,
+    exact: false,
   },
   {
     path: '/notes',
     component: Notes,
-    name: 'Notes',
     exact: true,
   },
   {
     path: '/note/:note_id',
     component: Note,
-    name: 'Note',
     exact: true,
   },
   {
     path: '/skills',
     component: Skills,
-    name: 'Skills',
     exact: true,
   },
   {

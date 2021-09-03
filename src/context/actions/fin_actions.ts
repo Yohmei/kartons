@@ -5,6 +5,7 @@ import {
   doc,
   DocumentData,
   DocumentReference,
+  getDocs,
   onSnapshot,
   query,
   updateDoc,
@@ -14,7 +15,7 @@ import { Dispatch } from 'react'
 import rfdc from 'rfdc'
 import { db } from '../../config/fb_config'
 import { get_local_wallet, set_local_wallet } from '../../local_storage/fin_storage'
-import { remove_arr_item } from '../../utils'
+import { remove_arr_item, r_id } from '../../utils'
 import { ini_state, IWallet, IWalletAction, IWalletEntry } from '../reducers/fin_reducer'
 
 const clone = rfdc()
@@ -39,12 +40,23 @@ export const get_current_wallet = (wallet: IWallet[]) => {
   return {} as IWallet
 }
 
-export const get_current_wallet_entries = (wallet: IWallet) => {
+export const get_current_wallet_entries = (wallet: IWallet): IWalletEntry[] => {
   for (let month of wallet.months) {
-    if (month.term === dayjs(new Date()).month()) return month.content
+    if (month.term === dayjs(new Date()).month()) {
+      return month.content
+    }
   }
 
-  return []
+  return [
+    {
+      id: 'new month',
+      timestamp: new Date(),
+      type: 'expenses',
+      category: '',
+      detail: '',
+      amount: 0,
+    },
+  ]
 }
 
 export const set_current_wallet = (wallet: IWallet, content: IWalletEntry[]) => {
@@ -111,6 +123,25 @@ export const add_new_wallet = async (user_uid: string) => {
   return doc_ref.id
 }
 
+export const get_finance = async (
+  user_uid: string,
+  set_fin_state: Dispatch<React.SetStateAction<IWallet[]>>,
+  set_data_received: Dispatch<React.SetStateAction<boolean>>
+) => {
+  const q = query(collection(db, 'finance'), where('uid', '==', user_uid))
+  const snapshot = await getDocs(q)
+
+  const finance = []
+
+  for (let item of snapshot.docs) {
+    const fin_data = item.data() as IWallet
+    finance.push(fin_data)
+  }
+
+  set_fin_state(finance)
+  set_data_received(true)
+}
+
 export const wallet_subscribe = (
   user_uid: string,
   dispatch: React.Dispatch<IWalletAction>,
@@ -121,19 +152,37 @@ export const wallet_subscribe = (
   const unsub = onSnapshot(q, (snapshot) => {
     if (snapshot.docs[0]) {
       const finance = [] as IWallet[]
+      let c = 0
 
       for (const doc of snapshot.docs) {
         const wallet = doc.data() as IWallet
         wallet.id = doc.id
         finance.push(wallet)
+
+        if (wallet.year !== dayjs(new Date()).year()) c++
       }
 
-      const wallet = get_current_wallet(finance)
-      const wallet_entries = get_current_wallet_entries(wallet)
+      if (c === finance.length) add_new_wallet(user_uid)
+      else {
+        const wallet = get_current_wallet(finance)
+        let wallet_entries = get_current_wallet_entries(wallet)
 
-      set_local_wallet(wallet)
-      update_wallet_context(wallet_entries, dispatch)
-      set_data_received(true)
+        if (wallet_entries[0]) {
+          if (wallet_entries[0].id === 'new month') {
+            wallet.months.push({
+              id: r_id(),
+              term: dayjs(new Date()).month(),
+              content: [],
+            })
+
+            wallet_entries = get_current_wallet_entries(wallet)
+          }
+        }
+
+        set_local_wallet(clone(wallet))
+        update_wallet_context(wallet_entries, dispatch)
+        set_data_received(true)
+      }
     } else {
       add_new_wallet(user_uid)
     }
