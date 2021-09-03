@@ -5,13 +5,14 @@ import DoneIcon from '@material-ui/icons/Done'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import equal from 'fast-deep-equal/es6/react'
 import React, { useContext, useEffect, useState } from 'react'
-import RSpring, { animated } from 'react-spring'
+import RSpring, { animated, useTransition } from 'react-spring'
 import rfdc from 'rfdc'
+import Spinner from '../../../components/Spinner'
 import {
-  categories_subscribe,
-  delete_category,
   add_category,
   add_detail,
+  categories_subscribe,
+  delete_category,
 } from '../../../context/actions/categories_actions'
 import { update_wallet } from '../../../context/actions/fin_actions'
 import { AuthContext } from '../../../context/AuthProvider'
@@ -19,12 +20,10 @@ import { CategoriesContext } from '../../../context/CategoriesProvider'
 import { FinanceContext } from '../../../context/FinanceProvider'
 import { ICategory, IDetail, IWalletEntry } from '../../../context/reducers/fin_reducer'
 import { r_id } from '../../../utils'
-import { IDataState } from '../../Page'
 import { capitalise_first } from '../utils'
 import NewCategoryInput from './NewCategoryInput'
 
 interface ICategoriesProps {
-  data_state: IDataState
   ani_style: { opacity: RSpring.SpringValue<number> }
   close_categories: () => void
   wallet_entry: IWalletEntry | undefined
@@ -33,7 +32,7 @@ interface ICategoriesProps {
 
 const clone = rfdc()
 
-const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_details }: ICategoriesProps) => {
+const Categories = ({ ani_style, close_categories, wallet_entry, is_details }: ICategoriesProps) => {
   const { wallet_state } = useContext(FinanceContext)
   const { categories_state, dispatch_cat } = useContext(CategoriesContext)
   const [state, set_state] = useState<any[][]>([]) // ICategory[][] or IDetail[][]
@@ -42,6 +41,12 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
   const [category_not_exist, set_category_not_exist] = useState(false)
   const { auth_state } = useContext(AuthContext)
   const { user } = auth_state
+  const [data_received, set_data_received] = useState(false)
+  const transition = useTransition(data_received, {
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+    config: { duration: 150 },
+  })
 
   const add_category_m = (new_category_name: string) => {
     if (wallet_entry) {
@@ -124,9 +129,9 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
 
   useEffect(() => {
     let unsub = () => {}
-    if (!equal(user, { uid: '' })) unsub = categories_subscribe(user.uid, dispatch_cat, data_state.set_data_received)
+    if (!equal(user, { uid: '' })) unsub = categories_subscribe(user.uid, dispatch_cat, set_data_received)
     return () => unsub()
-  }, [user, data_state.set_data_received, dispatch_cat, user.uid])
+  }, [user, set_data_received, dispatch_cat, user.uid])
 
   return (
     <animated.div style={ani_style} className='wallet-categories'>
@@ -146,10 +151,12 @@ const Categories = ({ data_state, ani_style, close_categories, wallet_entry, is_
             fontWeight: 'bold',
           }}
         >
+          <Spinner transition={transition} />
           Category does not exist.
         </div>
       ) : (
         <div className='categories-body'>
+          <Spinner transition={transition} />
           <div className='table-row-wrap'>
             {state.map((row, i) => (
               <div className='table-row' key={i}>

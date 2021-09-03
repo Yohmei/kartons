@@ -68,7 +68,6 @@ const Finance = ({ data_state }: IPageProps) => {
       {category_transition((style, is_categories) =>
         is_categories ? (
           <Categories
-            data_state={data_state}
             ani_style={style}
             close_categories={close_categories}
             wallet_entry={wallet_entry}
