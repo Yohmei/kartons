@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import RSpring from 'react-spring'
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
 import Spinner from '../../../components/Spinner'
 import { IWallet, IWalletEntry } from '../../../context/reducers/fin_reducer'
 
@@ -14,9 +14,12 @@ interface FinDetailsProps {
   transition: RSpring.TransitionFn<boolean, { opacity: number }>
 }
 
+const colors = ['#b47eb3', '#25d0b9', '#ef6f6c', '#efa9ae', '#ee6c4d']
+
 const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
   const { year } = useParams<QueryParams>()
   const [months, set_months] = useState<{ id: string; term: number; content: IWalletEntry[] }[]>([])
+  const [bars, set_bars] = useState<any[]>([])
   const months_list = [
     'January',
     'February',
@@ -33,22 +36,20 @@ const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
   ]
   const data = [
     {
-      name: 'Page A',
+      name: 'Income',
       uv: 4000,
       pv: 2400,
       amt: 2400,
     },
     {
-      name: 'Page B',
+      name: 'Expense',
       uv: 3000,
       pv: 1398,
       amt: 2210,
     },
     {
-      name: 'Page C',
-      uv: 2000,
-      pv: 9800,
-      amt: 2290,
+      name: 'Total',
+      uv: 10000,
     },
   ]
 
@@ -61,6 +62,19 @@ const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
       )
   }, [fin_state, year])
 
+  useEffect(() => {
+    const a = []
+
+    for (let inst of data) {
+      for (let entry of Object.entries(inst)) if (a.indexOf(entry[0]) === -1 && entry[0] !== 'name') a.push(entry[0])
+    }
+
+    set_bars(a)
+    setTimeout(() => {
+      console.log(bars)
+    }, 1)
+  }, [])
+
   return (
     <div className='content'>
       <Spinner transition={transition} />
@@ -70,8 +84,6 @@ const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
             <h5>{months_list[month.term]}</h5>
             <ResponsiveContainer width='100%' height='100%'>
               <BarChart
-                width={500}
-                height={300}
                 data={data}
                 margin={{
                   top: 20,
@@ -80,14 +92,12 @@ const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
                   bottom: 5,
                 }}
               >
-                <CartesianGrid strokeDasharray='3 3' />
                 <XAxis dataKey='name' />
-                <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey='pv' stackId='a' fill='#8884d8' />
-                <Bar dataKey='amt' stackId='a' fill='#82ca9d' />
-                <Bar dataKey='uv' fill='#ffc658' />
+                {bars.map((bar_name, i) => {
+                  return <Bar key={i} dataKey={bar_name} stackId='a' fill={colors[i]} />
+                })}
               </BarChart>
             </ResponsiveContainer>
           </div>
