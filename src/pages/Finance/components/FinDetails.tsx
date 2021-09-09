@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import RSpring from 'react-spring'
-import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
+import { Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, ReferenceLine } from 'recharts'
 import Spinner from '../../../components/Spinner'
 import { IWallet, IWalletEntry } from '../../../context/reducers/fin_reducer'
+import { r_id } from '../../../utils'
 import { capitalise_first } from './../utils'
 
 type QueryParams = {
@@ -15,12 +16,16 @@ interface FinDetailsProps {
   transition: RSpring.TransitionFn<boolean, { opacity: number }>
 }
 
-const colors = ['#b47eb3', '#25d0b9', '#ef6f6c', '#efa9ae', '#ee6c4d']
+let colors = ['#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', '#A0C4FF', '#BDB2FF', '#FFC6FF', '#FFFFFC']
+const get_color = () => {
+  if (colors.length === 0)
+    colors = ['#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', '#A0C4FF', '#BDB2FF', '#FFC6FF', '#FFFFFC']
+  return colors.splice(Math.floor(Math.random() * colors.length), 1)[0]
+}
 
 const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
   const { year } = useParams<QueryParams>()
   const [months, set_months] = useState<{ id: string; term: number; content: IWalletEntry[] }[]>([])
-  const [bars, set_bars] = useState<any[]>([])
   const months_list = [
     'January',
     'February',
@@ -59,19 +64,27 @@ const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
 
   useEffect(() => {
     if (fin_state.length !== 0) {
-      set_months(
-        fin_state.filter((wallet) => {
-          return wallet.year === Number(year)
-        })[0].months
-      )
+      const data = fin_state.filter((wallet) => {
+        return wallet.year === Number(year)
+      })[0].months
 
-      const a = []
+      const total: {
+        id: string
+        term: number
+        content: IWalletEntry[]
+      } = { id: r_id(), term: -1, content: [] }
 
-      for (let inst of data) {
-        for (let entry of Object.entries(inst)) if (a.indexOf(entry[0]) === -1 && entry[0] !== 'name') a.push(entry[0])
+      for (let item of data) {
+        for (let content_item of item.content) {
+          total.content.push(content_item)
+        }
       }
 
-      set_bars(a)
+      const is_total = data.filter((obj) => obj.term === -1)
+
+      if (is_total.length === 0) data.unshift(total)
+
+      set_months(data)
     }
   }, [fin_state, year, data])
 
@@ -90,7 +103,8 @@ const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
               const i = data.map((obj) => obj.name).indexOf(obj.name)
 
               if (i !== -1) {
-                data[i][item.category] = item.amount
+                if (data[i][item.category]) data[i][item.category] = data[i][item.category] + item.amount
+                else data[i][item.category] = item.amount
               } else {
                 obj[item.category] = item.amount
                 data.push(obj)
@@ -126,7 +140,7 @@ const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
             }
           }
 
-          data.push({ name: 'Total', total })
+          data.push({ name: 'Revenue', total })
 
           data.sort((a) => (a.name === 'Income' ? -1 : 1))
 
@@ -140,28 +154,36 @@ const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
 
           bars.sort((a) => (a.category === 'diff' ? -1 : 1))
 
-          console.log(bars)
-
           if (data.length !== 0)
             return (
               <div key={month.id} className='fin-detail-month'>
-                <h5>{months_list[month.term]}</h5>
+                <h5>{months_list[month.term] ? months_list[month.term] : 'Year'}</h5>
                 <ResponsiveContainer width='100%' height='100%'>
                   <BarChart
                     data={data}
                     margin={{
                       top: 20,
-                      right: 30,
-                      left: 20,
+                      right: 10,
+                      left: 10,
                       bottom: 5,
                     }}
                   >
                     <XAxis dataKey='name' />
-                    <Tooltip />
+                    <Tooltip
+                      itemStyle={{ backgroundColor: 'black' }}
+                      labelStyle={{ backgroundColor: 'black' }}
+                      contentStyle={{ backgroundColor: 'black', border: 'none' }}
+                    />
+                    <ReferenceLine y={0} stroke='#000' />
                     {bars.map((bar, i) => {
                       if (bar.category === 'diff')
                         return <Bar key={i} dataKey={bar.category} stackId='a' fill='transparent' />
-                      else return <Bar key={i} dataKey={bar.category} stackId='a' fill={colors[i]} />
+                      else
+                        return (
+                          <Bar key={i} dataKey={bar.category} stackId='a' fill={get_color()}>
+                            <LabelList dataKey={bar.category} position='inside' />
+                          </Bar>
+                        )
                     })}
                   </BarChart>
                 </ResponsiveContainer>
