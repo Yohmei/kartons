@@ -1,0 +1,18 @@
+.content {
+  .recharts-polar-grid {
+    circle,
+    line,
+    path {
+      stroke: #ff9b85;
+      stroke-width: 2px;
+
+      &:nth-child(2n) {
+        stroke: #ffd97d;
+      }
+    }
+  }
+  text {
+    fill: $font;
+    font-weight: bold;
+  }
+}
