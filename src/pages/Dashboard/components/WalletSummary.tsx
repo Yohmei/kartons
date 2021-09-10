@@ -78,7 +78,10 @@ const WalletSummary = () => {
     <div className='item wallet-summary'>
       <Spinner transition={transition} />
       <h4 className='item-header'>Wallet</h4>
-      <div className='wallet' style={{ height: '3em' }}>
+      <div
+        className='wallet'
+        style={{ height: '3em', backgroundColor: '#25d0b9', color: '#000000', fontWeight: 'bold' }}
+      >
         <span>Savings</span>
         <span>{String(state.savings).replace(/(?=.{3}$)/, ' ')}</span>
       </div>

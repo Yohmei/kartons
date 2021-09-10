@@ -4,6 +4,7 @@ import { s, sa } from '../../utils'
 import page_hoc from '../Page'
 
 const Skills = () => {
+  const [retry, set_retry] = useState<string[]>([])
   const [data, set_data] = useState([
     {
       subject: 'Math',
@@ -32,9 +33,11 @@ const Skills = () => {
   ])
 
   useEffect(() => {
-    if (s('.recharts-polar-angle-axis-tick-value'))
+    if (s('.recharts-polar-angle-axis-tick-value') && retry[0] !== 'done') {
       sa('.recharts-polar-angle-axis-tick-value')[3].style.transform = 'translateY(8px)'
-  }, [])
+      set_retry(['done'])
+    } else if (retry.length === 0) set_retry([])
+  }, [retry])
 
   return (
     <div className='content'>
