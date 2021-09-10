@@ -5,9 +5,8 @@ import Spinner from '../../../components/Spinner'
 import { delete_wallet_entry, update_wallet } from '../../../context/actions/fin_actions'
 import { FinanceContext } from '../../../context/FinanceProvider'
 import { IWalletEntry } from '../../../context/reducers/fin_reducer'
-import { r_id } from '../../../utils'
+import { capitalise_first, r_id } from '../../../utils'
 import { IDataState } from '../../Page'
-import { capitalise_first } from '../utils'
 
 export interface IWalletProp {
   is_edit: boolean

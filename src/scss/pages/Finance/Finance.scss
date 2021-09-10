@@ -336,6 +336,15 @@
         font-weight: bold;
       }
 
+      .edit {
+        cursor: pointer;
+
+        &:hover,
+        &:active {
+          color: $focus;
+        }
+      }
+
       .history-link {
         margin-left: 30px;
       }

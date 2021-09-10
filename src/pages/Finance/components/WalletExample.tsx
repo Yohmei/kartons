@@ -1,5 +1,5 @@
 import React from 'react'
-import { capitalise_first } from '../utils'
+import { capitalise_first } from '../../../utils'
 
 const WalletExample = () => {
   return (

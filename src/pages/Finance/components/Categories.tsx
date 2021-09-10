@@ -19,8 +19,7 @@ import { AuthContext } from '../../../context/AuthProvider'
 import { CategoriesContext } from '../../../context/CategoriesProvider'
 import { FinanceContext } from '../../../context/FinanceProvider'
 import { ICategory, IDetail, IWalletEntry } from '../../../context/reducers/fin_reducer'
-import { r_id } from '../../../utils'
-import { capitalise_first } from '../utils'
+import { capitalise_first, r_id } from '../../../utils'
 import NewCategoryInput from './NewCategoryInput'
 
 interface ICategoriesProps {
@@ -194,17 +193,17 @@ const Categories = ({ ani_style, close_categories, wallet_entry, is_details }: I
         <NewCategoryInput add_category={add_category_m} toggle_new_category_input={toggle_new_category_input} />
       )}
       <div className='categories-footer'>
-        <span
+        <div
           onClick={() => {
             if (is_edit) set_is_edit(false)
             else set_is_edit(true)
           }}
         >
           {is_edit ? <DoneIcon className='close-icon' /> : <BlockIcon className='close-icon edit-icon' />}
-        </span>
-        <span onClick={close_categories}>
+        </div>
+        <div onClick={close_categories}>
           <CloseIcon className='close-icon' />
-        </span>
+        </div>
       </div>
     </animated.div>
   )

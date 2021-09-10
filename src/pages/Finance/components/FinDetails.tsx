@@ -4,8 +4,7 @@ import RSpring from 'react-spring'
 import { Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, ReferenceLine } from 'recharts'
 import Spinner from '../../../components/Spinner'
 import { IWallet, IWalletEntry } from '../../../context/reducers/fin_reducer'
-import { r_id } from '../../../utils'
-import { capitalise_first } from './../utils'
+import { capitalise_first, r_id } from '../../../utils'
 
 type QueryParams = {
   year: string

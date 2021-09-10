@@ -43,6 +43,12 @@
         width: 100%;
         height: 350px;
       }
+
+      text[name='Revenue'],
+      text[name='Expenses'],
+      text[name='Income'] {
+        fill: $bg;
+      }
     }
   }
 

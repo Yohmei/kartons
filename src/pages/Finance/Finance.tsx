@@ -100,6 +100,7 @@ const Finance = ({ data_state }: IPageProps) => {
             if (is_edit) set_is_edit(false)
             else set_is_edit(true)
           }}
+          className='edit'
         >
           {is_edit ? 'Good' : 'Edit'}
         </span>

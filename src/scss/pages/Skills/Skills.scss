@@ -3,16 +3,17 @@
     circle,
     line,
     path {
-      stroke: #ff9b85;
+      stroke: darken($dutch_white, 20%);
       stroke-width: 2px;
-
-      &:nth-child(2n) {
-        stroke: #ffd97d;
-      }
     }
   }
+
   text {
     fill: $font;
     font-weight: bold;
+  }
+
+  .recharts-polygon {
+    stroke-width: 3px;
   }
 }
