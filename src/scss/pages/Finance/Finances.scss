@@ -18,6 +18,20 @@
     .cont {
       margin: auto;
       width: 100%;
+      height: 100%;
+      padding-top: 10px;
+
+      @include media('>ipad') {
+        width: 70%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+
+      a {
+        width: 100%;
+      }
 
       .list-item,
       .fin-detail-month {
@@ -41,7 +55,13 @@
         flex-direction: column;
         align-items: center;
         width: 100%;
-        height: 350px;
+        height: 200px;
+        padding: 0 20px;
+
+        @include media('>ipad') {
+          width: 250px;
+          margin: 0 5px;
+        }
       }
 
       text[name='Revenue'],

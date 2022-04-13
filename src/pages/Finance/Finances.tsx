@@ -29,11 +29,11 @@ const Finances = ({ data_state }: IPageProps) => {
           <div className='cont'>
             {fin_state.map((wallet) => {
               return (
-                <div key={wallet.id} className='list-item'>
-                  <h4>
-                    <Link to={`${url}/${wallet.year}`}>Year {wallet.year}</Link>
-                  </h4>
-                </div>
+                <Link key={wallet.id} to={`${url}/${wallet.year}`}>
+                  <div className='list-item'>
+                    <h4>Year {wallet.year}</h4>
+                  </div>
+                </Link>
               )
             })}
           </div>

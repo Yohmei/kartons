@@ -159,20 +159,22 @@ const Categories = ({ ani_style, close_categories, wallet_entry, is_details }: I
             {state.map((row, i) => (
               <div className='table-row' key={i}>
                 {row.map((category) => (
-                  <div className='table-item' key={category.id}>
+                  <>
                     {category.name === '' ? (
-                      <span onClick={toggle_new_category_input}>
-                        <AddIcon className='add-icon' />
-                      </span>
-                    ) : (
-                      <div>
-                        <span
-                          onClick={() => {
-                            if (wallet_entry) set_category(category.name, wallet_entry, is_details)
-                          }}
-                        >
-                          {capitalise_first(category.name)}
+                      <div onClick={toggle_new_category_input} className='table-item' key={category.id}>
+                        <span>
+                          <AddIcon className='add-icon' />
                         </span>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => {
+                          if (wallet_entry) set_category(category.name, wallet_entry, is_details)
+                        }}
+                        className='table-item'
+                        key={category.id}
+                      >
+                        <span>{capitalise_first(category.name)}</span>
                         <span
                           style={{ display: `${is_edit ? 'initial' : 'none'}` }}
                           className='remove-category'
@@ -182,7 +184,7 @@ const Categories = ({ ani_style, close_categories, wallet_entry, is_details }: I
                         </span>
                       </div>
                     )}
-                  </div>
+                  </>
                 ))}
               </div>
             ))}

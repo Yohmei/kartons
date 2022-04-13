@@ -18,7 +18,10 @@ const Home = () => {
     leave: { opacity: 0 },
   })
 
-  if (!equal(user, { uid: '' }) && is_auth) return <Redirect to='/dashboard' />
+  if (!equal(user, { uid: '' }) && is_auth) {
+    if (window.innerWidth > 768) return <Redirect to='/desktop' />
+    else return <Redirect to='/dashboard' />
+  }
 
   return (
     <>

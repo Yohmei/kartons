@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import rfdc from 'rfdc'
 
-const clone = rfdc()
+export const clone = rfdc()
 
 export const s = (element: string) => {
   return document.querySelector(element) as HTMLElement

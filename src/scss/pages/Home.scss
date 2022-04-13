@@ -78,6 +78,10 @@
       height: 70px;
       box-shadow: 0 0 1px 1px $font, inset 0 0 1px 1px $font;
 
+      @include media('>ipad') {
+        bottom: 100px;
+      }
+
       &::after {
         content: '';
         border: 2px solid $font;

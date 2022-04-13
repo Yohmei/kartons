@@ -138,6 +138,10 @@ export const get_finance = async (
     finance.push(fin_data)
   }
 
+  finance.sort((a, b) => {
+    return a.year > b.year ? -1 : 1
+  })
+
   set_fin_state(finance)
   set_data_received(true)
 }

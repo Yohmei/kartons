@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import RSpring from 'react-spring'
-import { Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, ReferenceLine } from 'recharts'
+import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
 import Spinner from '../../../components/Spinner'
 import { IWallet, IWalletEntry } from '../../../context/reducers/fin_reducer'
-import { capitalise_first, r_id } from '../../../utils'
+import { capitalise_first, clone, r_id } from '../../../utils'
 
 type QueryParams = {
   year: string
@@ -15,14 +15,20 @@ interface FinDetailsProps {
   transition: RSpring.TransitionFn<boolean, { opacity: number }>
 }
 
-let colors = ['#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', '#A0C4FF', '#BDB2FF', '#FFC6FF', '#FFFFFC']
-const get_color = () => {
-  if (colors.length === 0)
-    colors = ['#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', '#A0C4FF', '#BDB2FF', '#FFC6FF', '#FFFFFC']
-  return colors.splice(Math.floor(Math.random() * colors.length), 1)[0]
-}
-
 const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
+  let expense_colors = clone(['#EA5348', '#EC645B', '#EE766D', '#F0877F', '#F29891', '#F4A9A4'])
+  let income_colors = clone(['#06EFB1', '#10F9BB', '#24F9C1', '#38FAC6', '#4CFACC', '#60FBD2'])
+
+  const get_expense_color = () => {
+    if (expense_colors.length === 0) expense_colors = ['#EA5348', '#EC645B', '#EE766D', '#F0877F', '#F29891', '#F4A9A4']
+    return expense_colors.splice(expense_colors.length - 1, 1)[0]
+  }
+
+  const get_income_color = () => {
+    if (income_colors.length === 0) income_colors = ['#06EFB1', '#10F9BB', '#24F9C1', '#38FAC6', '#4CFACC', '#60FBD2']
+    return income_colors.splice(income_colors.length - 1, 1)[0]
+  }
+
   const { year } = useParams<QueryParams>()
   const [months, set_months] = useState<{ id: string; term: number; content: IWalletEntry[] }[]>([])
   const months_list = [
@@ -156,7 +162,9 @@ const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
           if (data.length !== 0)
             return (
               <div key={month.id} className='fin-detail-month'>
-                <h5>{months_list[month.term] ? months_list[month.term] : 'Year'}</h5>
+                <h5 style={{ position: 'relative', bottom: '-20px' }}>
+                  {months_list[month.term] ? months_list[month.term] : 'Year'}
+                </h5>
                 <ResponsiveContainer width='100%' height='100%'>
                   <BarChart
                     data={data}
@@ -177,12 +185,11 @@ const FinDetails = ({ fin_state, transition }: FinDetailsProps) => {
                     {bars.map((bar, i) => {
                       if (bar.category === 'diff')
                         return <Bar key={i} dataKey={bar.category} stackId='a' fill='transparent' />
-                      else
-                        return (
-                          <Bar key={i} dataKey={bar.category} stackId='a' fill={get_color()}>
-                            <LabelList dataKey={bar.category} position='inside' />
-                          </Bar>
-                        )
+                      else if (bar.name === 'Revenue')
+                        return <Bar key={i} dataKey={bar.category} stackId='a' fill='#FFDA85' />
+                      else if (bar.name === 'Expenses')
+                        return <Bar key={i} dataKey={bar.category} stackId='a' fill={get_expense_color()} />
+                      else return <Bar key={i} dataKey={bar.category} stackId='a' fill={get_income_color()}></Bar>
                     })}
                   </BarChart>
                 </ResponsiveContainer>

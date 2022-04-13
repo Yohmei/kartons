@@ -123,8 +123,8 @@
     }
 
     .new-note {
-      position: fixed;
-      bottom: 19%;
+      position: absolute;
+      bottom: 0;
       font-size: 1.3em;
       font-weight: bold;
       display: flex;
