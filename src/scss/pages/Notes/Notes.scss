@@ -123,13 +123,17 @@
     }
 
     .new-note {
-      position: absolute;
-      bottom: 0;
+      position: fixed;
+      bottom: 130px;
       font-size: 1.3em;
       font-weight: bold;
       display: flex;
       justify-content: flex-end;
       @include center(right, 100%, 64%);
+
+      @include media('>ipad') {
+        @include center(right, 100%, 24%);
+      }
     }
   }
 
